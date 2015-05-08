@@ -1,4 +1,46 @@
 <?xml version="1.0" encoding="windows-1251" standalone="no"?>
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
+<record>
+  <date>2015-05-08T15:32:33</date>
+  <millis>1431091953186</millis>
+  <sequence>0</sequence>
+  <logger>org.maxsys.mypwd.Vars</logger>
+  <level>SEVERE</level>
+  <class>org.maxsys.mypwd.Vars</class>
+  <method>LoadProperties</method>
+  <thread>1</thread>
+  <exception>
+    <message>java.io.FileNotFoundException: C:\Documents and Settings\Administrator\.MyPwd\Options.xml (The system cannot find the file specified)</message>
+    <frame>
+      <class>java.io.FileInputStream</class>
+      <method>open0</method>
+    </frame>
+    <frame>
+      <class>java.io.FileInputStream</class>
+      <method>open</method>
+      <line>195</line>
+    </frame>
+    <frame>
+      <class>java.io.FileInputStream</class>
+      <method>&lt;init&gt;</method>
+      <line>138</line>
+    </frame>
+    <frame>
+      <class>java.io.FileInputStream</class>
+      <method>&lt;init&gt;</method>
+      <line>93</line>
+    </frame>
+    <frame>
+      <class>org.maxsys.mypwd.Vars</class>
+      <method>LoadProperties</method>
+      <line>79</line>
+    </frame>
+    <frame>
+      <class>org.maxsys.mypwd.App</class>
+      <method>main</method>
+      <line>38</line>
+    </frame>
+  </exception>
+</record>
 </log>

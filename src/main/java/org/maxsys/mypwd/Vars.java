@@ -1,6 +1,8 @@
 package org.maxsys.mypwd;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -77,6 +79,123 @@ public class Vars {
             Vars.prop.loadFromXML(new FileInputStream(PropFileName));
         } catch (IOException ex) {
             Logger.getLogger(Vars.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static byte[] EncryptPwds(byte[] key, byte[] defile) {
+        String enfile = "";
+
+        int kc = (int) (Math.random() * 65535);
+        int b1 = kc / 256;
+        int b2 = kc - b1 * 256;
+
+        String ehs = Integer.toHexString(b2) + "|";
+        enfile += ehs;
+        ehs = Integer.toHexString(b1) + "|";
+        enfile += ehs;
+
+        for (int dec = 0; dec < defile.length; dec++) {
+            byte d = defile[dec];
+            byte k = key[kc];
+            kc++;
+            if (kc == key.length) {
+                kc = 0;
+            }
+            byte e = (byte) (d ^ k);
+            ehs = Integer.toHexString(e & 0xFF) + "|";
+            enfile += ehs;
+        }
+
+        return enfile.getBytes();
+    }
+
+    public static byte[] DecryptPwds(byte[] key, byte[] enfile) {
+        byte e;
+        int tec = 0;
+        String bs = "";
+        String defile = "";
+
+        int b2 = -1;
+        while (b2 < 0) {
+            e = enfile[tec];
+            tec++;
+            if ((char) e != '|') {
+                bs += (char) e;
+            } else {
+                b2 = Integer.parseInt(bs, 16);
+                bs = "";
+            }
+        }
+
+        int b1 = -1;
+        while (b1 < 0) {
+            e = enfile[tec];
+            tec++;
+            if ((char) e != '|') {
+                bs += (char) e;
+            } else {
+                b1 = Integer.parseInt(bs, 16);
+                bs = "";
+            }
+        }
+
+        int kc = b1 * 256 + b2;
+
+        for (int ec = tec; ec < enfile.length; ec++) {
+            e = enfile[ec];
+            if ((char) e != '|') {
+                bs += (char) e;
+                continue;
+            }
+
+            e = (byte) Integer.parseInt(bs, 16);
+            bs = "";
+
+            byte k = key[kc];
+            kc++;
+            if (kc == key.length) {
+                kc = 0;
+            }
+
+            byte d = (byte) (e ^ k);
+
+            defile += (char) d;
+        }
+
+        return defile.getBytes();
+    }
+
+    public static byte[] LoadFile(String filen) {
+        File file = new File(filen);
+        int len = (int) file.length();
+        byte[] b = new byte[len];
+
+        try {
+            FileInputStream key = new FileInputStream(filen);
+            key.read(b);
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Vars.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Vars.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return b;
+    }
+
+    public static void SaveFile(String filen, byte[] file) {
+        try {
+            try (FileOutputStream os = new FileOutputStream(filen)) {
+                os.write(file);
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Vars.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Vars.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
