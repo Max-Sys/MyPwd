@@ -1,5 +1,7 @@
 package org.maxsys.mypwd;
 
+import javax.swing.JOptionPane;
+
 public class PasswordDialog extends javax.swing.JDialog {
 
     public PasswordDialog(java.awt.Frame parent, boolean modal) {
@@ -84,6 +86,10 @@ public class PasswordDialog extends javax.swing.JDialog {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         Vars.MasterPassword = String.valueOf(jPasswordField1.getPassword());
+        if (Vars.MasterPassword.length() == 0) {
+            JOptionPane.showMessageDialog(this, "Password can not be empty!");
+            return;
+        }
         dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 

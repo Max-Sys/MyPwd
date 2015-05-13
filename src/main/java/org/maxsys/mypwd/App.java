@@ -47,14 +47,6 @@ public class App {
             }
         }
 
-        PasswordDialog dlg = new PasswordDialog(null, true);
-        dlg.setLocationRelativeTo(null);
-        dlg.setVisible(true);
-
-        if (Vars.MasterPassword.length() == 0) {
-            return;
-        }
-
         MainFrame frm = new MainFrame();
         frm.setLocationRelativeTo(null);
         frm.setVisible(true);

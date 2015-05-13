@@ -369,10 +369,12 @@ public class InitDialog extends javax.swing.JDialog {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         File file = new File(jTextField2.getText());
+
         if (!file.exists() || jTextField2.getText().length() == 0) {
             JOptionPane.showMessageDialog(this, "KEY file does not exists!");
             return;
         }
+
         if (!jRadioButton5.isSelected()) {
             file = new File(jTextField1.getText());
             if (!file.exists() || jTextField1.getText().length() == 0) {
@@ -383,8 +385,11 @@ public class InitDialog extends javax.swing.JDialog {
             byte[] defile = new byte[0];
             pwd = Vars.EncryptPwds(key, defile);
         }
+
         CardLayout cl = (CardLayout) getContentPane().getLayout();
-        cl.show(getContentPane(), "card4");
+        if (jRadioButton4.isSelected()) {
+            cl.show(getContentPane(), "card4");
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -413,29 +418,29 @@ public class InitDialog extends javax.swing.JDialog {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         FileOutputStream fos;
-        String filen;
-        if (jTextField2.getText().length() == 0) {
-            filen = Vars.PropPath + "/key.dat";
-        } else {
-            filen = jTextField2.getText();
-        }
+        String filen = Vars.PropPath + "/key.dat";
         try {
             File f = new File(filen);
-            if (f.exists()) {
-                JOptionPane.showMessageDialog(this, "KEY file \"" + filen + "\" already exists. Existing KEY file will be used.");
-                key = Vars.LoadFile(filen);
-                jTextField2.setText(filen);
-            } else {
-                fos = new FileOutputStream(filen);
-                for (int i = 0; i < 65536; i++) {
-                    int b = (int) (Math.random() * 255);
-                    fos.write(b);
+            while (f.exists()) {
+                JOptionPane.showMessageDialog(this, "KEY file \"" + filen + "\" already exists.");
+                JFileChooser jfc = new JFileChooser(Vars.PropPath);
+                jfc.showSaveDialog(null);
+                if (jfc.getSelectedFile() != null) {
+                    filen = jfc.getSelectedFile().getPath();
+                    f = new File(filen);
+                } else {
+                    return;
                 }
-                fos.close();
-                key = Vars.LoadFile(filen);
-                jTextField2.setText(filen);
-                JOptionPane.showMessageDialog(this, "KEY file \"" + filen + "\" created successfully.");
             }
+            fos = new FileOutputStream(filen);
+            for (int i = 0; i < 65536; i++) {
+                int b = (int) (Math.random() * 255);
+                fos.write(b);
+            }
+            fos.close();
+            key = Vars.LoadFile(filen);
+            jTextField2.setText(filen);
+            JOptionPane.showMessageDialog(this, "KEY file \"" + filen + "\" created successfully.");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(InitDialog.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -470,9 +475,19 @@ public class InitDialog extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(this, "PWD file and KEY file should not be the same!");
                 return;
             }
-            jTextField1.setText(jfc.getSelectedFile().getPath());
-            pwd = Vars.LoadFile(jfc.getSelectedFile().getPath());
-            JOptionPane.showMessageDialog(this, "PWD file \"" + jfc.getSelectedFile().getPath() + "\" will be used.");
+            File f = new File(jfc.getSelectedFile().getPath());
+            if (f.exists()) {
+                pwd = Vars.LoadFile(jfc.getSelectedFile().getPath());
+                if (Vars.DecryptPwds(key, pwd) != null) {
+                    jTextField1.setText(jfc.getSelectedFile().getPath());
+                    JOptionPane.showMessageDialog(this, "PWD file \"" + jfc.getSelectedFile().getPath() + "\" will be used.");
+                } else {
+                    jTextField1.setText("");
+                    JOptionPane.showMessageDialog(this, "PWD file \"" + jfc.getSelectedFile().getPath() + "\" is wrong and will not be used.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "PWD file does not exists!");
+            }
         } else {
             JOptionPane.showMessageDialog(this, "PWD file does not exists!");
         }
@@ -493,12 +508,33 @@ public class InitDialog extends javax.swing.JDialog {
 
         byte[] defile = new byte[0];
         pwd = Vars.EncryptPwds(key, defile);
-        Vars.SaveFile(filen, pwd);
-        jTextField1.setText(filen);
+        if (pwd != null) {
+            Vars.SaveFile(filen, pwd);
+            jTextField1.setText(filen);
+            JOptionPane.showMessageDialog(this, "PWD file \"" + filen + "\" created successfully.");
+        }
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
-        
+        if (jRadioButton4.isSelected()) {
+            Vars.setProp("PwdsFileType", "L");
+            Vars.setProp("KeysFilePath", jTextField2.getText());
+            Vars.setProp("PwdsFilePath", jTextField1.getText());
+        }
+
+        if (jRadioButton5.isSelected()) {
+            Vars.setProp("PwdsFileType", "G");
+            Vars.setProp("KeysFilePath", jTextField2.getText());
+        }
+
+        if (jRadioButton6.isSelected()) {
+            Vars.setProp("PwdsFileType", "LG");
+            Vars.setProp("KeysFilePath", jTextField2.getText());
+            Vars.setProp("PwdsFilePath", jTextField1.getText());
+        }
+
+        Vars.SaveProperties();
+
         dispose();
     }//GEN-LAST:event_jButton10ActionPerformed
 
