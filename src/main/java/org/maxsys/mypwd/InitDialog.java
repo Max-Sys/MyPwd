@@ -383,7 +383,7 @@ public class InitDialog extends javax.swing.JDialog {
             }
         } else {
             byte[] defile = new byte[0];
-            pwd = Vars.EncryptPwds(key, defile);
+            pwd = Vars.EncryptBytes(key, defile);
         }
 
         CardLayout cl = (CardLayout) getContentPane().getLayout();
@@ -478,7 +478,7 @@ public class InitDialog extends javax.swing.JDialog {
             File f = new File(jfc.getSelectedFile().getPath());
             if (f.exists()) {
                 pwd = Vars.LoadFile(jfc.getSelectedFile().getPath());
-                if (Vars.DecryptPwds(key, pwd) != null) {
+                if (Vars.DecryptBytes(key, pwd) != null) {
                     jTextField1.setText(jfc.getSelectedFile().getPath());
                     JOptionPane.showMessageDialog(this, "PWD file \"" + jfc.getSelectedFile().getPath() + "\" will be used.");
                 } else {
@@ -507,7 +507,7 @@ public class InitDialog extends javax.swing.JDialog {
         }
 
         byte[] defile = new byte[0];
-        pwd = Vars.EncryptPwds(key, defile);
+        pwd = Vars.EncryptBytes(key, defile);
         if (pwd != null) {
             Vars.SaveFile(filen, pwd);
             jTextField1.setText(filen);

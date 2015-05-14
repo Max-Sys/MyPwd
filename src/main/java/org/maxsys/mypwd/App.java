@@ -43,8 +43,13 @@ public class App {
             dlg.setVisible(true);
 
             if (!Vars.prop.containsKey("PwdsFileType")) {
-//                return;
+                return;
             }
+        }
+
+        if (!Vars.getProp("PwdsFileType").equals("G")) {
+            Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
+            Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
         }
 
         MainFrame frm = new MainFrame();

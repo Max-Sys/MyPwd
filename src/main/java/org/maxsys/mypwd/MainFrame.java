@@ -20,6 +20,7 @@ import com.google.api.services.drive.model.ParentReference;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,6 +63,7 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -180,10 +182,17 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("bytes");
+        jButton2.setText("save");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("show");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
             }
         });
 
@@ -270,7 +279,9 @@ public class MainFrame extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jButton1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2)))
+                                .addComponent(jButton2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton3)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -280,7 +291,8 @@ public class MainFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSplitPane1)
                 .addGap(18, 18, 18)
@@ -527,29 +539,55 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+//        Pwd p = new Pwd("test1");
+//        p.setField("1nasdfsf", Vars.EncryptBytes(Vars.KEY, "1v2354uh9hh".getBytes()));
+//        //p.setField("2nagdfgvuhgfs", "fvvsdjhjkhjk".getBytes());
+//        //p.setField("3nsdfgdfg", "3vffvvf".getBytes());
+//        byte[] bytes = p.getPwdItem();
+//        System.out.println("bytes = " + bytes.length);
+//        Pwd p1 = new Pwd(bytes);
+//        System.out.println("p1 = " + p1);
+//        for (String s : p1.getFieldNames()) {
+//            System.out.println(s + " - " + new String(p1.getField(s)) + " - " + new String(Vars.DecryptBytes(Vars.KEY, p1.getField(s))));
+//        }
+
+        System.out.println(Vars.PWD.length);
+        System.out.println(new String(Vars.PWD));
+        System.out.println("===");
+        
         Pwd p = new Pwd("test1");
-        p.addField("1nasdfsf", "1v2354uh9hh".getBytes());
-        p.addField("2nagdfgvuhgfs", "fvvsdjhjkhjk".getBytes());
-        p.addField("3nsdfgdfg", "3vffvvf".getBytes());
-        byte[] bytes = p.getPwdItem();
-        System.out.println("bytes = " + bytes);
-        Pwd p1 = new Pwd(bytes);
+        p.setField("1field1", "1value1".getBytes());
+        Vars.addPwdItem(p.getPwdItem());
+        
+        System.out.println(Vars.PWD.length);
+        System.out.println(new String(Vars.PWD));
+        System.out.println("===");
+        
+        ArrayList<byte[]> pwdItems = Vars.getPwdItems();
+        System.out.println("pwdItems: " + pwdItems.size());
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        for (int i = 65534; i < 65538; i++) {
-            byte[] b = Pwd.GetLengthInBytes(i);
-            System.out.println("bh = " + b[1] + ", bl = " + b[0]);
-            int l = Pwd.GetLengthInInt(b);
-            System.out.println("l = " + l);
-        }
+        Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        for (byte[] pwditem : Vars.getPwdItems()) {
+            Pwd p = new Pwd(pwditem);
+            System.out.println(p.toString() + ":");
+            for (String fn : p.getFieldNames()) {
+                System.out.println(fn + " - " + new String(p.getField(fn)));
+            }
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;

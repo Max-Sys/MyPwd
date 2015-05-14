@@ -2,9 +2,8 @@ package org.maxsys.mypwd;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
-public class Pwd {
+public final class Pwd {
 
     private final String name;
     private final LinkedHashMap<String, byte[]> fields;
@@ -15,16 +14,66 @@ public class Pwd {
     }
 
     public Pwd(byte[] pwdItem) {
-        this.name = "";
+        int ic = 2;
+        byte[] lb = new byte[2];
+        int li;
+
+        lb[0] = pwdItem[0];
+        lb[1] = pwdItem[1];
+        li = GetLengthInInt(lb);
+
+        String ns = "";
+        while (ic < (2 + li)) {
+            ns += (char) pwdItem[ic];
+            ic++;
+        }
+        this.name = ns;
+
         this.fields = new LinkedHashMap<>();
+
+        while (ic < pwdItem.length) {
+            lb[0] = pwdItem[ic];
+            ic++;
+            lb[1] = pwdItem[ic];
+            ic++;
+            li = GetLengthInInt(lb);
+            int nic = ic + li;
+            String fn = "";
+            while (ic < nic) {
+                fn += (char) pwdItem[ic];
+                ic++;
+            }
+            lb[0] = pwdItem[ic];
+            ic++;
+            lb[1] = pwdItem[ic];
+            ic++;
+            li = GetLengthInInt(lb);
+            nic = ic + li;
+            byte[] fi = new byte[li];
+            while (ic < nic) {
+                fi[ic + li - nic] = pwdItem[ic];
+                ic++;
+            }
+            setField(fn, fi);
+        }
     }
 
-    public void addField(String fieldName, byte[] fieldValue) {
+    public void setField(String fieldName, byte[] fieldValue) {
         this.fields.put(fieldName, fieldValue);
     }
 
     public byte[] getField(String fieldName) {
         return this.fields.get(fieldName);
+    }
+
+    public String[] getFieldNames() {
+        String[] names = new String[this.fields.size()];
+        int i = 0;
+        for (String s : this.fields.keySet()) {
+            names[i] = s;
+            i++;
+        }
+        return names;
     }
 
     public byte[] getPwdItem() {
@@ -36,17 +85,17 @@ public class Pwd {
             bItem.add(b);
         }
 
-        for (Map.Entry<String, byte[]> entry : this.fields.entrySet()) {
-            byte[] ekl = GetLengthInBytes(entry.getKey().getBytes().length);
+        for (String fn : this.fields.keySet()) {
+            byte[] ekl = GetLengthInBytes(fn.getBytes().length);
             bItem.add(ekl[0]);
             bItem.add(ekl[1]);
-            for (byte b : entry.getKey().getBytes()) {
+            for (byte b : fn.getBytes()) {
                 bItem.add(b);
             }
-            byte[] evl = GetLengthInBytes(entry.getValue().length);
+            byte[] evl = GetLengthInBytes(getField(fn).length);
             bItem.add(evl[0]);
             bItem.add(evl[1]);
-            for (byte b : entry.getValue()) {
+            for (byte b : getField(fn)) {
                 bItem.add(b);
             }
         }
@@ -71,5 +120,10 @@ public class Pwd {
     public static int GetLengthInInt(byte[] length) {
         int len = (length[0] & 0xFF) + (length[1] & 0xFF) * 256;
         return len;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

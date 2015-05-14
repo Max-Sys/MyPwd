@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,7 +55,56 @@ public class Vars {
      +00 02 length
      +02 xx body
      */
-    public static byte[] EncryptPwds(byte[] key, byte[] defile) {
+    public static void addPwdItem(byte[] pwditem) {
+        byte[] defile = DecryptBytes(KEY, PWD);
+        if (defile == null) {
+            return;
+        }
+
+        byte[] newdefile = new byte[defile.length + pwditem.length + 2];
+        System.arraycopy(defile, 0, newdefile, 0, defile.length);
+
+        int ic = defile.length;
+        byte[] lb = Pwd.GetLengthInBytes(pwditem.length);
+
+        System.arraycopy(lb, 0, newdefile, ic, 2);
+
+        System.arraycopy(pwditem, 0, newdefile, ic + 2, pwditem.length);
+
+        PWD = EncryptBytes(KEY, newdefile);
+    }
+
+    public static ArrayList<byte[]> getPwdItems() {
+        byte[] defile = DecryptBytes(KEY, PWD);
+        if (defile == null) {
+            return null;
+        }
+
+        int dfc = 0;
+        byte[] lb = new byte[2];
+        int li;
+
+        ArrayList<byte[]> pwdItems = new ArrayList<>();
+
+        while (dfc < defile.length) {
+            lb[0] = defile[dfc];
+            dfc++;
+            lb[1] = defile[dfc];
+            dfc++;
+            li = Pwd.GetLengthInInt(lb);
+            int nic = dfc + li;
+            byte[] pwdItem = new byte[li];
+            while (dfc < nic) {
+                pwdItem[dfc + li - nic] = defile[dfc];
+                dfc++;
+            }
+            pwdItems.add(pwdItem);
+        }
+
+        return pwdItems;
+    }
+
+    public static byte[] EncryptBytes(byte[] key, byte[] defile) {
         if (MasterPassword.length() == 0) {
             PasswordDialog dlg = new PasswordDialog(null, true);
             dlg.setLocationRelativeTo(null);
@@ -125,7 +175,7 @@ public class Vars {
         return enfile.getBytes();
     }
 
-    public static byte[] DecryptPwds(byte[] key, byte[] enfile) {
+    public static byte[] DecryptBytes(byte[] key, byte[] enfile) {
         if (MasterPassword.length() == 0) {
             PasswordDialog dlg = new PasswordDialog(null, true);
             dlg.setLocationRelativeTo(null);
