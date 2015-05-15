@@ -17,6 +17,9 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.ParentReference;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +27,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 public class MainFrame extends javax.swing.JFrame {
 
@@ -33,15 +39,81 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() {
         initComponents();
 
-        setTitle(Vars.Version);
+        if (Vars.getProp("PwdsFileType").equals("L")) {
+            setTitle(Vars.Version + " - local only mode");
+        }
+        if (Vars.getProp("PwdsFileType").equals("G")) {
+            setTitle(Vars.Version + " - remote only mode");
+        }
+        if (Vars.getProp("PwdsFileType").equals("LG")) {
+            setTitle(Vars.Version + " - local & remote mode");
+        }
 
         jSplitPane1.setDividerLocation(0.35);
+
+        jTable1.setModel(new DefaultTableModel(
+                new Object[][]{},
+                new String[]{"Field", "Value"}) {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    }
+                });
+
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(500);
+        jTable1.getColumnModel().getColumn(1).setPreferredWidth(500);
+
+        RefreshList();
+
+        jList2.requestFocus();
+    }
+
+    private void RefreshList() {
+        DefaultListModel lm = new DefaultListModel();
+
+        ArrayList<byte[]> pwditems = Vars.getPwdItems();
+        if (pwditems != null) {
+            for (byte[] pwditem : pwditems) {
+                Pwd p = new Pwd(pwditem);
+                lm.addElement(p);
+            }
+
+            jMenuItem7.setEnabled(false);
+        } else {
+            JOptionPane.showMessageDialog(null, "Decryption failed!");
+            jMenuItem7.setEnabled(true);
+        }
+
+        jList2.setModel(lm);
+    }
+
+    private class showtimer implements Runnable {
+
+        private final PwdStr pstr;
+
+        public showtimer(PwdStr pstr) {
+            this.pstr = pstr;
+        }
+
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(450);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            pstr.Hide();
+            jTable1.repaint();
+        }
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        jMenuItem8 = new javax.swing.JMenuItem();
+        jMenuItem9 = new javax.swing.JMenuItem();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -61,18 +133,43 @@ public class MainFrame extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jList2 = new javax.swing.JList();
         jPanel2 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jMenuItem7 = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuItem5 = new javax.swing.JMenuItem();
+        jMenuItem10 = new javax.swing.JMenuItem();
+        jMenuItem6 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
 
+        jMenuItem8.setText("Show / Hide");
+        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem8ActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuItem8);
+
+        jMenuItem9.setText("Copy to clipboard");
+        jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem9ActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(jMenuItem9);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jButton4.setText("drive 1");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -142,10 +239,10 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        jList2.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
+        jList2.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                jList2ValueChanged(evt);
+            }
         });
         jScrollPane2.setViewportView(jList2);
 
@@ -157,46 +254,40 @@ public class MainFrame extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
         );
 
         jSplitPane1.setLeftComponent(jPanel1);
+
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 514, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 419, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
         );
 
         jSplitPane1.setRightComponent(jPanel2);
 
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setText("save");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        jButton3.setText("show");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
-
         jMenu1.setText("File");
+
+        jMenuItem7.setText("Enter master password");
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem7ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem7);
 
         jMenuItem1.setText("Exit");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
@@ -208,6 +299,35 @@ public class MainFrame extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
+        jMenu3.setText("Pwds");
+
+        jMenuItem5.setText("Add new...");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem5);
+
+        jMenuItem10.setText("Remove selected");
+        jMenuItem10.setEnabled(false);
+        jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem10ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem10);
+
+        jMenuItem6.setText("...");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem6);
+
+        jMenuBar1.add(jMenu3);
+
         jMenu2.setText("Tools");
 
         jMenuItem2.setText("Initialize...");
@@ -218,7 +338,7 @@ public class MainFrame extends javax.swing.JFrame {
         });
         jMenu2.add(jMenuItem2);
 
-        jMenuItem3.setText("Refresh");
+        jMenuItem3.setText("...");
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem3ActionPerformed(evt);
@@ -269,19 +389,11 @@ public class MainFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField4))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton10)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton11)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton9))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton3)))
+                        .addComponent(jButton10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton9)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -289,11 +401,6 @@ public class MainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSplitPane1)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -528,66 +635,125 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        PasswordDialog dlg = new PasswordDialog(this, true);
+        Vars.MasterPassword = "";
+        InitDialog dlg = new InitDialog(null, true);
         dlg.setLocationRelativeTo(null);
         dlg.setVisible(true);
-        System.out.println("pwd = " + Vars.MasterPassword);
+        RefreshList();
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        // TODO add your handling code here:
+        RefreshList();
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-//        Pwd p = new Pwd("test1");
-//        p.setField("1nasdfsf", Vars.EncryptBytes(Vars.KEY, "1v2354uh9hh".getBytes()));
-//        //p.setField("2nagdfgvuhgfs", "fvvsdjhjkhjk".getBytes());
-//        //p.setField("3nsdfgdfg", "3vffvvf".getBytes());
-//        byte[] bytes = p.getPwdItem();
-//        System.out.println("bytes = " + bytes.length);
-//        Pwd p1 = new Pwd(bytes);
-//        System.out.println("p1 = " + p1);
-//        for (String s : p1.getFieldNames()) {
-//            System.out.println(s + " - " + new String(p1.getField(s)) + " - " + new String(Vars.DecryptBytes(Vars.KEY, p1.getField(s))));
-//        }
-
-        System.out.println(Vars.PWD.length);
-        System.out.println(new String(Vars.PWD));
-        System.out.println("===");
-        
-        Pwd p = new Pwd("test1");
-        p.setField("1field1", "1value1".getBytes());
-        Vars.addPwdItem(p.getPwdItem());
-        
-        System.out.println(Vars.PWD.length);
-        System.out.println(new String(Vars.PWD));
-        System.out.println("===");
-        
-        ArrayList<byte[]> pwdItems = Vars.getPwdItems();
-        System.out.println("pwdItems: " + pwdItems.size());
-
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        for (byte[] pwditem : Vars.getPwdItems()) {
-            Pwd p = new Pwd(pwditem);
-            System.out.println(p.toString() + ":");
-            for (String fn : p.getFieldNames()) {
-                System.out.println(fn + " - " + new String(p.getField(fn)));
-            }
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        NewPwdDialog dlg = new NewPwdDialog(this, true);
+        dlg.setLocationRelativeTo(null);
+        dlg.setVisible(true);
+        RefreshList();
+        if (Vars.getProp("PwdsFileType").equals("L")) {
+            Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
         }
-    }//GEN-LAST:event_jButton3ActionPerformed
+        if (Vars.getProp("PwdsFileType").equals("G")) {
+        }
+        if (Vars.getProp("PwdsFileType").equals("LG")) {
+            Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+        }
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        RefreshList();
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void jList2ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList2ValueChanged
+        DefaultTableModel tm = (DefaultTableModel) jTable1.getModel();
+        tm.setRowCount(0);
+
+        if (jList2.isSelectionEmpty()) {
+            jMenuItem10.setEnabled(false);
+            return;
+        } else {
+            jMenuItem10.setEnabled(true);
+        }
+
+        Pwd pwd = (Pwd) jList2.getSelectedValue();
+
+        for (String fn : pwd.getFieldNames()) {
+            PwdStr pstr = new PwdStr(new String(pwd.getField(fn)));
+            Object[] row = new Object[2];
+            row[0] = fn;
+            row[1] = pstr;
+            tm.addRow(row);
+        }
+    }//GEN-LAST:event_jList2ValueChanged
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        if (evt.getButton() == 1 && evt.getClickCount() > 1) {
+            PwdStr pstr = (PwdStr) jTable1.getValueAt(jTable1.getSelectedRow(), 1);
+            if (pstr.isHided()) {
+                pstr.Show();
+                Thread thr = new Thread(new showtimer(pstr));
+                thr.start();
+            } else {
+                pstr.Hide();
+            }
+            jTable1.repaint();
+        }
+
+        int rowatpoint = jTable1.rowAtPoint(jTable1.getMousePosition());
+        if (rowatpoint < 0 || evt.getButton() != 3) {
+            return;
+        }
+        jTable1.setRowSelectionInterval(rowatpoint, rowatpoint);
+
+        jPopupMenu1.show(jTable1, jTable1.getMousePosition().x, jTable1.getMousePosition().y);
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
+        int sr = jTable1.getSelectedRow();
+        if (sr < 0) {
+            return;
+        }
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(new StringSelection(((PwdStr) jTable1.getValueAt(sr, 1)).getPwd()), null);
+    }//GEN-LAST:event_jMenuItem9ActionPerformed
+
+    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
+        int sr = jTable1.getSelectedRow();
+        if (sr < 0) {
+            return;
+        }
+        PwdStr pstr = (PwdStr) jTable1.getValueAt(sr, 1);
+        if (pstr.isHided()) {
+            pstr.Show();
+        } else {
+            pstr.Hide();
+        }
+        jTable1.repaint();
+    }//GEN-LAST:event_jMenuItem8ActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(""), null);
+    }//GEN-LAST:event_formWindowClosing
+
+    private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
+        if (jList2.isSelectionEmpty()) {
+            return;
+        }
+
+        Pwd pwd = (Pwd) jList2.getSelectedValue();
+        Vars.removePwdItem(pwd.getName());
+
+        RefreshList();
+    }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
@@ -599,15 +765,25 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JList jList2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JMenuItem jMenuItem6;
+    private javax.swing.JMenuItem jMenuItem7;
+    private javax.swing.JMenuItem jMenuItem8;
+    private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;

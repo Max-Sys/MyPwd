@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 public class Vars {
 
@@ -74,9 +75,24 @@ public class Vars {
         PWD = EncryptBytes(KEY, newdefile);
     }
 
+    public static void removePwdItem(String name) {
+        ArrayList<byte[]> items = getPwdItems();
+        if (items == null) {
+            return;
+        }
+        PWD = EncryptBytes(KEY, new byte[0]);
+        for (byte[] item : items) {
+            Pwd p = new Pwd(item);
+            if (!p.getName().equals(name)) {
+                addPwdItem(item);
+            }
+        }
+    }
+
     public static ArrayList<byte[]> getPwdItems() {
         byte[] defile = DecryptBytes(KEY, PWD);
         if (defile == null) {
+            MasterPassword = "";
             return null;
         }
 
