@@ -290,13 +290,10 @@ public class Vars {
         try {
             FileInputStream key = new FileInputStream(filen);
             key.read(b);
-
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(Vars.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Vars.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(Vars.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Vars.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return b;
@@ -308,11 +305,9 @@ public class Vars {
                 os.write(file);
             }
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(Vars.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Vars.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(Vars.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Vars.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

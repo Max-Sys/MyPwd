@@ -47,9 +47,12 @@ public class App {
             }
         }
 
-        if (!Vars.getProp("PwdsFileType").equals("G")) {
+        if (Vars.getProp("PwdsFileType").equals("L")) {
             Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
             Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
+        }
+        if (Vars.getProp("PwdsFileType").equals("G")) {
+            Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
         }
 
         MainFrame frm = new MainFrame();

@@ -5,6 +5,7 @@ import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInsta
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.http.AbstractInputStreamContent;
 import com.google.api.client.http.FileContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpResponse;
@@ -66,6 +67,23 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void RefreshList() {
+        if (Vars.getProp("PwdsFileType").equals("G")) {
+            getPwdFromGoogleDrive();
+            System.out.println("lalala " + Vars.PWD);
+        }
+
+        if (Vars.PWD == null) {
+            jMenuItem3.setEnabled(false);
+            jMenuItem4.setEnabled(false);
+            jMenuItem5.setEnabled(false);
+            jMenuItem7.setEnabled(false);
+            jMenuItem8.setEnabled(false);
+            jMenuItem9.setEnabled(false);
+            jMenuItem10.setEnabled(false);
+            jMenuItem11.setEnabled(false);
+            return;
+        }
+        
         DefaultListModel lm = new DefaultListModel();
 
         ArrayList<byte[]> pwditems = Vars.getPwdItems();
@@ -74,7 +92,6 @@ public class MainFrame extends javax.swing.JFrame {
                 Pwd p = new Pwd(pwditem);
                 lm.addElement(p);
             }
-
             jMenuItem7.setEnabled(false);
         } else {
             JOptionPane.showMessageDialog(null, "Decryption failed!");
@@ -82,6 +99,110 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
         jList2.setModel(lm);
+    }
+
+    private void getPwdFromGoogleDrive() {
+        JacksonFactory jsonFactory = new JacksonFactory();
+        HttpTransport httpTransport = new NetHttpTransport();
+        GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
+                .setTransport(httpTransport).setClientSecrets(Vars.CLIENT_ID, Vars.CLIENT_SECRET).build();
+        credential.setRefreshToken(Vars.getProp("RefreshToken"));
+
+        Drive service = new Drive.Builder(httpTransport, jsonFactory, credential).setApplicationName(Vars.Version).build();
+
+        File file = null;
+        try {
+            file = service.files().get(Vars.getProp("GoogleDriveFileID")).execute();
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        if (file == null) {
+            JOptionPane.showMessageDialog(null, "Failed to access PWD file on Google Drive!");
+            return;
+        }
+
+        String pwd = "";
+
+        try {
+            HttpResponse resp = service.getRequestFactory().buildGetRequest(new GenericUrl(file.getDownloadUrl())).execute();
+            try (InputStream is = resp.getContent()) {
+                int b = 0;
+                while (b >= 0) {
+                    b = is.read();
+                    if (b != -1) {
+                        pwd += (char) b;
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        Vars.PWD = pwd.getBytes();
+    }
+
+    private void updatePwdOnGoogleDrive() {
+        JacksonFactory jsonFactory = new JacksonFactory();
+        HttpTransport httpTransport = new NetHttpTransport();
+        GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
+                .setTransport(httpTransport).setClientSecrets(Vars.CLIENT_ID, Vars.CLIENT_SECRET).build();
+        credential.setRefreshToken(Vars.getProp("RefreshToken"));
+
+        Drive service = new Drive.Builder(httpTransport, jsonFactory, credential).setApplicationName(Vars.Version).build();
+
+        File file = null;
+        try {
+            file = service.files().get(Vars.getProp("GoogleDriveFileID")).execute();
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        if (file == null) {
+            return;
+        }
+
+        AbstractInputStreamContent mediaContent = new AbstractInputStreamContent("text/plain") {
+            int sp = -1;
+
+            @Override
+            public InputStream getInputStream() throws IOException {
+                InputStream is = new InputStream() {
+
+                    @Override
+                    public int read() throws IOException {
+                        sp++;
+                        if (sp < Vars.PWD.length) {
+                            return Vars.PWD[sp];
+                        } else {
+                            return -1;
+                        }
+                    }
+                };
+                return is;
+            }
+
+            @Override
+            public String getType() {
+                return "text/plain";
+            }
+
+            @Override
+            public long getLength() throws IOException {
+                return Vars.PWD.length;
+            }
+
+            @Override
+            public boolean retrySupported() {
+                return false;
+            }
+        };
+
+        try {
+            service.files().update(Vars.getProp("GoogleDriveFileID"), file, mediaContent).execute();
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private class showtimer implements Runnable {
@@ -484,8 +605,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        jTextField1.setText("");
-        jTextField2.setText("1/1vlCH_ZH_oT_rgtouASDOOfvQ27QXzt4wN2hQGfxVhcMEudVrK5jSpoR30zcRFq6");
+        updatePwdOnGoogleDrive();
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
@@ -652,8 +772,10 @@ public class MainFrame extends javax.swing.JFrame {
             Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
         }
         if (Vars.getProp("PwdsFileType").equals("G")) {
+            updatePwdOnGoogleDrive();
         }
         if (Vars.getProp("PwdsFileType").equals("LG")) {
+            updatePwdOnGoogleDrive();
             Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
         }
 
@@ -747,8 +869,10 @@ public class MainFrame extends javax.swing.JFrame {
             Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
         }
         if (Vars.getProp("PwdsFileType").equals("G")) {
+            updatePwdOnGoogleDrive();
         }
         if (Vars.getProp("PwdsFileType").equals("LG")) {
+            updatePwdOnGoogleDrive();
             Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
         }
 

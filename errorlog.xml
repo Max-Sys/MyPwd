@@ -1,4 +1,88 @@
 <?xml version="1.0" encoding="windows-1251" standalone="no"?>
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
+<record>
+  <date>2015-05-22T15:30:45</date>
+  <millis>1432301445185</millis>
+  <sequence>0</sequence>
+  <logger>org.maxsys.mypwd.MainFrame</logger>
+  <level>SEVERE</level>
+  <class>org.maxsys.mypwd.MainFrame</class>
+  <method>getPwdFromGoogleDrive</method>
+  <thread>1</thread>
+  <exception>
+    <message>com.google.api.client.googleapis.json.GoogleJsonResponseException: 404 Not Found
+{
+  "code" : 404,
+  "errors" : [ {
+    "domain" : "global",
+    "location" : "file",
+    "locationType" : "other",
+    "message" : "File not found: 0BxL7Tuu9cHXROEtzV0xkTHo3X1k",
+    "reason" : "notFound"
+  } ],
+  "message" : "File not found: 0BxL7Tuu9cHXROEtzV0xkTHo3X1k"
+}</message>
+    <frame>
+      <class>com.google.api.client.googleapis.json.GoogleJsonResponseException</class>
+      <method>from</method>
+      <line>145</line>
+    </frame>
+    <frame>
+      <class>com.google.api.client.googleapis.services.json.AbstractGoogleJsonClientRequest</class>
+      <method>newExceptionOnError</method>
+      <line>113</line>
+    </frame>
+    <frame>
+      <class>com.google.api.client.googleapis.services.json.AbstractGoogleJsonClientRequest</class>
+      <method>newExceptionOnError</method>
+      <line>40</line>
+    </frame>
+    <frame>
+      <class>com.google.api.client.googleapis.services.AbstractGoogleClientRequest$1</class>
+      <method>interceptResponse</method>
+      <line>312</line>
+    </frame>
+    <frame>
+      <class>com.google.api.client.http.HttpRequest</class>
+      <method>execute</method>
+      <line>1056</line>
+    </frame>
+    <frame>
+      <class>com.google.api.client.googleapis.services.AbstractGoogleClientRequest</class>
+      <method>executeUnparsed</method>
+      <line>410</line>
+    </frame>
+    <frame>
+      <class>com.google.api.client.googleapis.services.AbstractGoogleClientRequest</class>
+      <method>executeUnparsed</method>
+      <line>343</line>
+    </frame>
+    <frame>
+      <class>com.google.api.client.googleapis.services.AbstractGoogleClientRequest</class>
+      <method>execute</method>
+      <line>460</line>
+    </frame>
+    <frame>
+      <class>org.maxsys.mypwd.MainFrame</class>
+      <method>getPwdFromGoogleDrive</method>
+      <line>115</line>
+    </frame>
+    <frame>
+      <class>org.maxsys.mypwd.MainFrame</class>
+      <method>RefreshList</method>
+      <line>71</line>
+    </frame>
+    <frame>
+      <class>org.maxsys.mypwd.MainFrame</class>
+      <method>&lt;init&gt;</method>
+      <line>64</line>
+    </frame>
+    <frame>
+      <class>org.maxsys.mypwd.App</class>
+      <method>main</method>
+      <line>58</line>
+    </frame>
+  </exception>
+</record>
 </log>
