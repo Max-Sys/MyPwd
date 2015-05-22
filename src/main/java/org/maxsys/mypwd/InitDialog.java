@@ -1,11 +1,25 @@
 package org.maxsys.mypwd;
 
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.http.AbstractInputStreamContent;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.ParentReference;
 import java.awt.CardLayout;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -62,6 +76,30 @@ public class InitDialog extends javax.swing.JDialog {
         jButton11 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jPanel6 = new javax.swing.JPanel();
+        jButton12 = new javax.swing.JButton();
+        jButton13 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jTextField3 = new javax.swing.JTextField();
+        jButton14 = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        jTextField4 = new javax.swing.JTextField();
+        jButton15 = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
+        jPasswordField1 = new javax.swing.JPasswordField();
+        jLabel8 = new javax.swing.JLabel();
+        jPasswordField2 = new javax.swing.JPasswordField();
+        jPanel7 = new javax.swing.JPanel();
+        jButton16 = new javax.swing.JButton();
+        jButton17 = new javax.swing.JButton();
+        jButton18 = new javax.swing.JButton();
+        jButton19 = new javax.swing.JButton();
+        jPanel8 = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jTextField5 = new javax.swing.JTextField();
+        jTextField6 = new javax.swing.JTextField();
+        jButton20 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Initialization");
@@ -86,7 +124,7 @@ public class InitDialog extends javax.swing.JDialog {
         jRadioButton1.setText("Create new or connect existing KEY and PWD files");
 
         buttonGroup1.add(jRadioButton2);
-        jRadioButton2.setText("Create new KEY file");
+        jRadioButton2.setText("Create new KEY file and encrypt existing PWD file");
 
         buttonGroup1.add(jRadioButton3);
         jRadioButton3.setText("Create new Google drive credentials");
@@ -353,6 +391,234 @@ public class InitDialog extends javax.swing.JDialog {
 
         getContentPane().add(jPanel3, "card4");
 
+        jButton12.setText("Finish");
+        jButton12.setEnabled(false);
+        jButton12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton12ActionPerformed(evt);
+            }
+        });
+
+        jButton13.setText("Cancel");
+        jButton13.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton13ActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("KEY file location:");
+
+        jTextField3.setEditable(false);
+
+        jButton14.setText("Create new KEY file");
+        jButton14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton14ActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("New KEY file location:");
+
+        jTextField4.setEditable(false);
+
+        jButton15.setText("Encrypt PWD file");
+        jButton15.setEnabled(false);
+        jButton15.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton15ActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setText("Old password:");
+        jLabel7.setEnabled(false);
+
+        jPasswordField1.setEnabled(false);
+
+        jLabel8.setText("New password:");
+        jLabel8.setEnabled(false);
+
+        jPasswordField2.setEnabled(false);
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton13))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField3))
+                    .addComponent(jButton14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField4))
+                    .addComponent(jButton15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPasswordField1, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPasswordField2, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton14)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8)
+                    .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton15)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 184, Short.MAX_VALUE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton13)
+                    .addComponent(jButton12))
+                .addContainerGap())
+        );
+
+        getContentPane().add(jPanel6, "card5");
+
+        jButton16.setText("Cancel");
+        jButton16.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton16ActionPerformed(evt);
+            }
+        });
+
+        jButton17.setText("< Back");
+        jButton17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton17ActionPerformed(evt);
+            }
+        });
+
+        jButton18.setText("Next >");
+        jButton18.setEnabled(false);
+        jButton18.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton18ActionPerformed(evt);
+            }
+        });
+
+        jButton19.setText("Create new Google drive credentials");
+        jButton19.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton19ActionPerformed(evt);
+            }
+        });
+
+        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("File & folder"));
+        jPanel8.setEnabled(false);
+
+        jLabel9.setText("Folder name:");
+        jLabel9.setEnabled(false);
+
+        jLabel10.setText("File name:");
+        jLabel10.setEnabled(false);
+
+        jTextField5.setEnabled(false);
+
+        jTextField6.setEnabled(false);
+
+        jButton20.setText("Save PWD file");
+        jButton20.setEnabled(false);
+        jButton20.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton20ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField5))
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField6)))
+                .addContainerGap())
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton20)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton19, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
+                        .addComponent(jButton17)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 321, Short.MAX_VALUE)
+                        .addComponent(jButton16)))
+                .addContainerGap())
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton19)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 175, Short.MAX_VALUE)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton16)
+                    .addComponent(jButton18)
+                    .addComponent(jButton17))
+                .addContainerGap())
+        );
+
+        getContentPane().add(jPanel7, "card6");
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -364,6 +630,10 @@ public class InitDialog extends javax.swing.JDialog {
         CardLayout cl = (CardLayout) getContentPane().getLayout();
         if (jRadioButton1.isSelected()) {
             cl.show(getContentPane(), "card3");
+        }
+        if (jRadioButton2.isSelected()) {
+            jTextField3.setText(Vars.getProp("KeysFilePath"));
+            cl.show(getContentPane(), "card5");
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -381,14 +651,14 @@ public class InitDialog extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(this, "PWD file does not exists!");
                 return;
             }
-        } else {
-            byte[] defile = new byte[0];
-            pwd = Vars.EncryptBytes(key, defile);
         }
 
         CardLayout cl = (CardLayout) getContentPane().getLayout();
         if (jRadioButton4.isSelected()) {
             cl.show(getContentPane(), "card4");
+        }
+        if (jRadioButton5.isSelected()) {
+            cl.show(getContentPane(), "card6");
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -525,6 +795,7 @@ public class InitDialog extends javax.swing.JDialog {
         if (jRadioButton5.isSelected()) {
             Vars.setProp("PwdsFileType", "G");
             Vars.setProp("KeysFilePath", jTextField2.getText());
+            Vars.prop.remove("PwdsFilePath");
         }
 
         if (jRadioButton6.isSelected()) {
@@ -542,13 +813,262 @@ public class InitDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_jButton11ActionPerformed
 
+    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+        if (!Vars.getProp("PwdsFileType").equals("G")) {
+            Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
+            Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
+        } else {
+            JOptionPane.showMessageDialog(this, "Sync with Google!");
+        }
+        dispose();
+    }//GEN-LAST:event_jButton12ActionPerformed
+
+    private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
+        dispose();
+    }//GEN-LAST:event_jButton13ActionPerformed
+
+    private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
+        FileOutputStream fos;
+        int kfnum = 1;
+        String filen = Vars.PropPath + "/key-" + kfnum + ".dat";
+        try {
+            File f = new File(filen);
+            while (f.exists()) {
+                kfnum++;
+                if (kfnum == 1000) {
+                    JOptionPane.showMessageDialog(this, "Error creating KEY file!");
+                    return;
+                }
+                filen = Vars.PropPath + "/key-" + kfnum + ".dat";
+                f = new File(filen);
+            }
+            fos = new FileOutputStream(filen);
+            for (int i = 0; i < 65536; i++) {
+                int b = (int) (Math.random() * 255);
+                fos.write(b);
+            }
+            fos.close();
+            jTextField4.setText(filen);
+            JOptionPane.showMessageDialog(this, "KEY file \"" + filen + "\" created successfully.");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(InitDialog.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(InitDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        jButton14.setEnabled(false);
+        jButton15.setEnabled(true);
+        jLabel7.setEnabled(true);
+        jLabel8.setEnabled(true);
+        jPasswordField1.setEnabled(true);
+        jPasswordField2.setEnabled(true);
+    }//GEN-LAST:event_jButton14ActionPerformed
+
+    private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
+        String oldpassw = new String(jPasswordField1.getPassword());
+        String newpassw = new String(jPasswordField2.getPassword());
+        if (oldpassw.length() == 0 || newpassw.length() == 0) {
+            JOptionPane.showMessageDialog(this, "Password can not be empty!");
+            return;
+        }
+        pwd = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
+        key = Vars.LoadFile(Vars.getProp("KeysFilePath"));
+        byte[] newkey = Vars.LoadFile(jTextField4.getText());
+
+        Vars.MasterPassword = oldpassw;
+        pwd = Vars.DecryptBytes(key, pwd);
+        if (pwd == null) {
+            JOptionPane.showMessageDialog(null, "Decryption failed! Probably the old password wrong.");
+            return;
+        }
+
+        Vars.MasterPassword = newpassw;
+        pwd = Vars.EncryptBytes(newkey, pwd);
+
+        Vars.SaveFile(Vars.getProp("PwdsFilePath"), pwd);
+        Vars.setProp("KeysFilePath", jTextField4.getText());
+        Vars.SaveProperties();
+
+        jButton15.setEnabled(false);
+        jLabel7.setEnabled(false);
+        jLabel8.setEnabled(false);
+        jPasswordField1.setEnabled(false);
+        jPasswordField2.setEnabled(false);
+        jButton12.setEnabled(true);
+
+        JOptionPane.showMessageDialog(this, "PWD file \"" + Vars.getProp("PwdsFilePath") + "\" encrypted and saved successfully.");
+    }//GEN-LAST:event_jButton15ActionPerformed
+
+    private void jButton16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton16ActionPerformed
+        dispose();
+    }//GEN-LAST:event_jButton16ActionPerformed
+
+    private void jButton17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton17ActionPerformed
+        CardLayout cl = (CardLayout) getContentPane().getLayout();
+        cl.show(getContentPane(), "card3");
+    }//GEN-LAST:event_jButton17ActionPerformed
+
+    private void jButton18ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton18ActionPerformed
+        CardLayout cl = (CardLayout) getContentPane().getLayout();
+        cl.show(getContentPane(), "card4");
+    }//GEN-LAST:event_jButton18ActionPerformed
+
+    private void jButton19ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton19ActionPerformed
+        HttpTransport httpTransport = new NetHttpTransport();
+        JacksonFactory jsonFactory = new JacksonFactory();
+
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                httpTransport, jsonFactory, Vars.CLIENT_ID, Vars.CLIENT_SECRET, Arrays.asList(DriveScopes.DRIVE))
+                .setAccessType("offline")
+                .setApprovalPrompt("force").build();
+
+        AuthorizationCodeInstalledApp app = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver());
+
+        Credential credential = null;
+        try {
+            credential = app.authorize("user");
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        if (credential == null) {
+            JOptionPane.showMessageDialog(null, "Google drive access failed!");
+            return;
+        }
+
+        Vars.setProp("RefreshToken", credential.getRefreshToken());
+
+        jButton19.setEnabled(false);
+        jPanel8.setEnabled(true);
+        jLabel9.setEnabled(true);
+        jLabel10.setEnabled(true);
+        jTextField5.setEnabled(true);
+        jTextField6.setEnabled(true);
+        jButton20.setEnabled(true);
+    }//GEN-LAST:event_jButton19ActionPerformed
+
+    private void jButton20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton20ActionPerformed
+        if (jTextField6.getText().length() == 0) {
+            JOptionPane.showMessageDialog(this, "File name can not be empty!");
+            return;
+        }
+
+        byte[] defile = new byte[0];
+        pwd = Vars.EncryptBytes(key, defile);
+
+        JacksonFactory jsonFactory = new JacksonFactory();
+        HttpTransport httpTransport = new NetHttpTransport();
+        GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
+                .setTransport(httpTransport).setClientSecrets(Vars.CLIENT_ID, Vars.CLIENT_SECRET).build();
+        credential.setRefreshToken(Vars.getProp("RefreshToken"));
+
+        Drive service = new Drive.Builder(httpTransport, jsonFactory, credential).setApplicationName(Vars.Version).build();
+
+        String folderid = "";
+
+        if (jTextField5.getText().length() > 0) {
+            com.google.api.services.drive.model.File body = new com.google.api.services.drive.model.File();
+            body.setTitle(jTextField5.getText());
+            body.setDescription("MyPwd Folder");
+            body.setMimeType("application/vnd.google-apps.folder");
+
+            try {
+                com.google.api.services.drive.model.File file = service.files().insert(body).execute();
+                if (file != null) {
+                    folderid = file.getId();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error creating folder!");
+                    return;
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(InitDialog.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        com.google.api.services.drive.model.File body = new com.google.api.services.drive.model.File();
+        body.setTitle(jTextField6.getText());
+        body.setDescription("MyPwd PWD file");
+        body.setMimeType("text/plain");
+        if (folderid.length() > 0) {
+            body.setParents(Arrays.asList(new ParentReference().setId(folderid)));
+        }
+
+        AbstractInputStreamContent mediaContent = new AbstractInputStreamContent("text/plain") {
+            int sp = -1;
+
+            @Override
+            public InputStream getInputStream() throws IOException {
+                InputStream is = new InputStream() {
+
+                    @Override
+                    public int read() throws IOException {
+                        sp++;
+                        if (sp < pwd.length) {
+                            return pwd[sp];
+                        } else {
+                            return -1;
+                        }
+                    }
+                };
+                return is;
+            }
+
+            @Override
+            public String getType() {
+                return "text/plain";
+            }
+
+            @Override
+            public long getLength() throws IOException {
+                return pwd.length;
+            }
+
+            @Override
+            public boolean retrySupported() {
+                return false;
+            }
+        };
+
+        String fileid = "";
+        try {
+            com.google.api.services.drive.model.File file = service.files().insert(body, mediaContent).execute();
+            if (file != null) {
+                fileid = file.getId();
+            } else {
+                JOptionPane.showMessageDialog(this, "Error creating file!");
+                return;
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(InitDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        Vars.setProp("GoogleDriveFileID", fileid);
+
+        jPanel8.setEnabled(false);
+        jLabel9.setEnabled(false);
+        jLabel10.setEnabled(false);
+        jTextField5.setEnabled(false);
+        jTextField6.setEnabled(false);
+        jButton20.setEnabled(false);
+        jButton18.setEnabled(true);
+    }//GEN-LAST:event_jButton20ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
+    private javax.swing.JButton jButton12;
+    private javax.swing.JButton jButton13;
+    private javax.swing.JButton jButton14;
+    private javax.swing.JButton jButton15;
+    private javax.swing.JButton jButton16;
+    private javax.swing.JButton jButton17;
+    private javax.swing.JButton jButton18;
+    private javax.swing.JButton jButton19;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton20;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
@@ -557,14 +1077,25 @@ public class InitDialog extends javax.swing.JDialog {
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPasswordField jPasswordField1;
+    private javax.swing.JPasswordField jPasswordField2;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
@@ -573,5 +1104,9 @@ public class InitDialog extends javax.swing.JDialog {
     private javax.swing.JRadioButton jRadioButton6;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jTextField5;
+    private javax.swing.JTextField jTextField6;
     // End of variables declaration//GEN-END:variables
 }

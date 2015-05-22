@@ -33,9 +33,6 @@ import javax.swing.table.DefaultTableModel;
 
 public class MainFrame extends javax.swing.JFrame {
 
-    private final String CLIENT_ID = "948160247524-j9dam0gik6ngu8rpfqqujlepgbo6sdk1.apps.googleusercontent.com";
-    private final String CLIENT_SECRET = "kOmeybiX4Dln8LBTxO6NoADR";
-
     public MainFrame() {
         initComponents();
 
@@ -142,10 +139,12 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu3 = new javax.swing.JMenu();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem10 = new javax.swing.JMenuItem();
-        jMenuItem6 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItem11 = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jMenuItem4 = new javax.swing.JMenuItem();
 
         jMenuItem8.setText("Show / Hide");
@@ -239,6 +238,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        jList2.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jList2.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 jList2ValueChanged(evt);
@@ -318,14 +318,6 @@ public class MainFrame extends javax.swing.JFrame {
         });
         jMenu3.add(jMenuItem10);
 
-        jMenuItem6.setText("...");
-        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem6ActionPerformed(evt);
-            }
-        });
-        jMenu3.add(jMenuItem6);
-
         jMenuBar1.add(jMenu3);
 
         jMenu2.setText("Tools");
@@ -337,14 +329,19 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         jMenu2.add(jMenuItem2);
+        jMenu2.add(jSeparator1);
 
-        jMenuItem3.setText("...");
+        jMenuItem3.setText("Export to plain text...");
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem3ActionPerformed(evt);
             }
         });
         jMenu2.add(jMenuItem3);
+
+        jMenuItem11.setText("Import from plain text...");
+        jMenu2.add(jMenuItem11);
+        jMenu2.add(jSeparator2);
 
         jMenuItem4.setText("Options");
         jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
@@ -439,7 +436,7 @@ public class MainFrame extends javax.swing.JFrame {
         JacksonFactory jsonFactory = new JacksonFactory();
 
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                httpTransport, jsonFactory, CLIENT_ID, CLIENT_SECRET, Arrays.asList(DriveScopes.DRIVE))
+                httpTransport, jsonFactory, Vars.CLIENT_ID, Vars.CLIENT_SECRET, Arrays.asList(DriveScopes.DRIVE))
                 .setAccessType("offline")
                 .setApprovalPrompt("force").build();
 
@@ -460,7 +457,7 @@ public class MainFrame extends javax.swing.JFrame {
         JacksonFactory jsonFactory = new JacksonFactory();
         HttpTransport httpTransport = new NetHttpTransport();
         GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
-                .setTransport(httpTransport).setClientSecrets(CLIENT_ID, CLIENT_SECRET).build();
+                .setTransport(httpTransport).setClientSecrets(Vars.CLIENT_ID, Vars.CLIENT_SECRET).build();
         credential.setAccessToken(jTextField1.getText());
         credential.setRefreshToken(jTextField2.getText());
 
@@ -495,7 +492,7 @@ public class MainFrame extends javax.swing.JFrame {
         JacksonFactory jsonFactory = new JacksonFactory();
         HttpTransport httpTransport = new NetHttpTransport();
         GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
-                .setTransport(httpTransport).setClientSecrets(CLIENT_ID, CLIENT_SECRET).build();
+                .setTransport(httpTransport).setClientSecrets(Vars.CLIENT_ID, Vars.CLIENT_SECRET).build();
         credential.setAccessToken(jTextField1.getText());
         credential.setRefreshToken(jTextField2.getText());
 
@@ -519,7 +516,7 @@ public class MainFrame extends javax.swing.JFrame {
         JacksonFactory jsonFactory = new JacksonFactory();
         HttpTransport httpTransport = new NetHttpTransport();
         GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
-                .setTransport(httpTransport).setClientSecrets(CLIENT_ID, CLIENT_SECRET).build();
+                .setTransport(httpTransport).setClientSecrets(Vars.CLIENT_ID, Vars.CLIENT_SECRET).build();
         credential.setAccessToken(jTextField1.getText());
         credential.setRefreshToken(jTextField2.getText());
 
@@ -546,7 +543,7 @@ public class MainFrame extends javax.swing.JFrame {
         JacksonFactory jsonFactory = new JacksonFactory();
         HttpTransport httpTransport = new NetHttpTransport();
         GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
-                .setTransport(httpTransport).setClientSecrets(CLIENT_ID, CLIENT_SECRET).build();
+                .setTransport(httpTransport).setClientSecrets(Vars.CLIENT_ID, Vars.CLIENT_SECRET).build();
         credential.setAccessToken(jTextField1.getText());
         credential.setRefreshToken(jTextField2.getText());
 
@@ -564,7 +561,7 @@ public class MainFrame extends javax.swing.JFrame {
         JacksonFactory jsonFactory = new JacksonFactory();
         HttpTransport httpTransport = new NetHttpTransport();
         GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
-                .setTransport(httpTransport).setClientSecrets(CLIENT_ID, CLIENT_SECRET).build();
+                .setTransport(httpTransport).setClientSecrets(Vars.CLIENT_ID, Vars.CLIENT_SECRET).build();
         credential.setAccessToken(jTextField1.getText());
         credential.setRefreshToken(jTextField2.getText());
 
@@ -592,7 +589,7 @@ public class MainFrame extends javax.swing.JFrame {
         JacksonFactory jsonFactory = new JacksonFactory();
         HttpTransport httpTransport = new NetHttpTransport();
         GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
-                .setTransport(httpTransport).setClientSecrets(CLIENT_ID, CLIENT_SECRET).build();
+                .setTransport(httpTransport).setClientSecrets(Vars.CLIENT_ID, Vars.CLIENT_SECRET).build();
         credential.setAccessToken(jTextField1.getText());
         credential.setRefreshToken(jTextField2.getText());
 
@@ -650,7 +647,7 @@ public class MainFrame extends javax.swing.JFrame {
         NewPwdDialog dlg = new NewPwdDialog(this, true);
         dlg.setLocationRelativeTo(null);
         dlg.setVisible(true);
-        RefreshList();
+
         if (Vars.getProp("PwdsFileType").equals("L")) {
             Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
         }
@@ -659,11 +656,9 @@ public class MainFrame extends javax.swing.JFrame {
         if (Vars.getProp("PwdsFileType").equals("LG")) {
             Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
         }
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
 
-    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
-        Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
-    }//GEN-LAST:event_jMenuItem6ActionPerformed
+        RefreshList();
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         RefreshList();
@@ -748,6 +743,15 @@ public class MainFrame extends javax.swing.JFrame {
         Pwd pwd = (Pwd) jList2.getSelectedValue();
         Vars.removePwdItem(pwd.getName());
 
+        if (Vars.getProp("PwdsFileType").equals("L")) {
+            Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+        }
+        if (Vars.getProp("PwdsFileType").equals("G")) {
+        }
+        if (Vars.getProp("PwdsFileType").equals("LG")) {
+            Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+        }
+
         RefreshList();
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
@@ -769,11 +773,11 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
+    private javax.swing.JMenuItem jMenuItem11;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
-    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;
@@ -782,6 +786,8 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
