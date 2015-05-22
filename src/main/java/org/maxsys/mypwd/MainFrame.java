@@ -83,7 +83,7 @@ public class MainFrame extends javax.swing.JFrame {
             jMenuItem11.setEnabled(false);
             return;
         }
-        
+
         DefaultListModel lm = new DefaultListModel();
 
         ArrayList<byte[]> pwditems = Vars.getPwdItems();
