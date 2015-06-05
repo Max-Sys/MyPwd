@@ -1,5 +1,6 @@
 package org.maxsys.mypwd;
 
+import java.nio.charset.Charset;
 import javax.swing.table.DefaultTableModel;
 
 public class NewPwdDialog extends javax.swing.JDialog {

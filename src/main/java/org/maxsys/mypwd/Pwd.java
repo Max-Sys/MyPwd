@@ -81,8 +81,6 @@ public final class Pwd {
         ArrayList<Byte> bItem = new ArrayList<>();
         byte[] nl = GetLengthInBytes(this.name.getBytes().length);
 
-        //byte[] bbb = this.name.getBytes(Charset.forName("UTF-8"));
-
         bItem.add(nl[0]);
         bItem.add(nl[1]);
         for (byte b : this.name.getBytes()) {
