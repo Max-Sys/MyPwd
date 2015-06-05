@@ -12,8 +12,14 @@ import com.google.api.services.drive.model.File;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -485,10 +491,33 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         JFileChooser jfc = new JFileChooser();
+        jfc.setSelectedFile(new java.io.File(Vars.PropPath + "/export.txt"));
         int r = jfc.showSaveDialog(this);
 
         if (r == JFileChooser.CANCEL_OPTION || jfc.getSelectedFile() == null) {
             return;
+        }
+        String filen = jfc.getSelectedFile().getPath();
+        try {
+            try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filen)))) {
+                ArrayList<byte[]> pwditems = Vars.getPwdItems();
+                for (byte[] pwditem : pwditems) {
+                    Pwd p = new Pwd(pwditem);
+                    bw.write("==================================================");
+                    bw.newLine();
+                    bw.write(p.getName());
+                    bw.newLine();
+                    for (String fn : p.getFieldNames()) {
+                        String fv = new String(p.getField(fn));
+                        bw.write("   " + fn + ": " + fv);
+                        bw.newLine();
+                    }
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
@@ -623,12 +652,57 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
-        JFileChooser jfc = new JFileChooser();
+        JFileChooser jfc = new JFileChooser(Vars.PropPath);
         int r = jfc.showOpenDialog(this);
 
         if (r == JFileChooser.CANCEL_OPTION || jfc.getSelectedFile() == null) {
             return;
         }
+
+        String filen = jfc.getSelectedFile().getPath();
+        try {
+            try (BufferedReader br = new BufferedReader(new FileReader(filen))) {
+                String line;
+                Pwd pwd = null;
+                while ((line = br.readLine()) != null) {
+                    if (line.contains("==========")) {
+                        if (pwd == null) {
+                            line = br.readLine();
+                            pwd = new Pwd(line.trim());
+                            System.out.println("Pwd " + pwd.getName() + " created.");
+                        } else {
+                            System.out.println("Pwd " + pwd.getName() + " closed.");
+                            Vars.addPwdItem(pwd.getPwdItem());
+                            pwd = null;
+                            line = br.readLine();
+                            if (line != null) {
+                                pwd = new Pwd(line.trim());
+                                System.out.println("Pwd " + pwd.getName() + " created.");
+                            }
+                        }
+                    } else {
+                        String[] fnfv = line.trim().split(": ");
+                        if (fnfv.length == 2) {
+                            //System.out.println("field: " + fnfv[0].trim() + ": " + fnfv[1].trim());
+                        }
+                        if (fnfv.length == 1) {
+                            //System.out.println("field: Field: " + fnfv[0].trim());
+                        }
+                    }
+                }
+                if (pwd != null) {
+                    Vars.addPwdItem(pwd.getPwdItem());
+                    System.out.println("Pwd " + pwd.getName() + " closed.");
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+        RefreshList();
     }//GEN-LAST:event_jMenuItem11ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

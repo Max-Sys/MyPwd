@@ -1,5 +1,6 @@
 package org.maxsys.mypwd;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -79,6 +80,9 @@ public final class Pwd {
     public byte[] getPwdItem() {
         ArrayList<Byte> bItem = new ArrayList<>();
         byte[] nl = GetLengthInBytes(this.name.getBytes().length);
+
+        //byte[] bbb = this.name.getBytes(Charset.forName("UTF-8"));
+
         bItem.add(nl[0]);
         bItem.add(nl[1]);
         for (byte b : this.name.getBytes()) {
