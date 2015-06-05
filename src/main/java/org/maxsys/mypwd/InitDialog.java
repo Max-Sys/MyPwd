@@ -6,7 +6,6 @@ import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.AbstractInputStreamContent;
-import com.google.api.client.http.FileContent;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -14,7 +13,6 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.ParentReference;
 import java.awt.CardLayout;
-import java.awt.event.ItemEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -37,9 +35,8 @@ public class InitDialog extends javax.swing.JDialog {
 
         setMinimumSize(getSize());
 
-        if (!Vars.prop.containsKey("PwdsFilePath")) {
+        if (!Vars.prop.containsKey("PwdsFilePath") || !Vars.getProp("PwdsFileType").equals("L")) {
             jRadioButton2.setEnabled(false);
-            jRadioButton3.setEnabled(false);
         }
     }
 
@@ -55,7 +52,6 @@ public class InitDialog extends javax.swing.JDialog {
         jButton2 = new javax.swing.JButton();
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
         jPanel2 = new javax.swing.JPanel();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -73,11 +69,25 @@ public class InitDialog extends javax.swing.JDialog {
         jTextField1 = new javax.swing.JTextField();
         jButton8 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
+        jPanel9 = new javax.swing.JPanel();
+        jButton22 = new javax.swing.JButton();
+        jButton23 = new javax.swing.JButton();
+        jButton24 = new javax.swing.JButton();
+        jPanel10 = new javax.swing.JPanel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jTextField7 = new javax.swing.JTextField();
+        jTextField8 = new javax.swing.JTextField();
+        jButton25 = new javax.swing.JButton();
+        jLabel13 = new javax.swing.JLabel();
+        jTextField9 = new javax.swing.JTextField();
+        jButton21 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jButton10 = new javax.swing.JButton();
         jButton11 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jButton12 = new javax.swing.JButton();
         jButton13 = new javax.swing.JButton();
@@ -91,33 +101,7 @@ public class InitDialog extends javax.swing.JDialog {
         jPasswordField1 = new javax.swing.JPasswordField();
         jLabel8 = new javax.swing.JLabel();
         jPasswordField2 = new javax.swing.JPasswordField();
-        jPanel7 = new javax.swing.JPanel();
-        jButton16 = new javax.swing.JButton();
-        jButton17 = new javax.swing.JButton();
-        jButton18 = new javax.swing.JButton();
-        jButton19 = new javax.swing.JButton();
-        jPanel8 = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jTextField6 = new javax.swing.JTextField();
-        jButton20 = new javax.swing.JButton();
-        jPanel9 = new javax.swing.JPanel();
-        jButton22 = new javax.swing.JButton();
-        jButton23 = new javax.swing.JButton();
-        jButton24 = new javax.swing.JButton();
-        jPanel10 = new javax.swing.JPanel();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
-        jTextField8 = new javax.swing.JTextField();
-        jButton25 = new javax.swing.JButton();
-        jLabel13 = new javax.swing.JLabel();
-        jTextField9 = new javax.swing.JTextField();
-        jPanel11 = new javax.swing.JPanel();
-        jRadioButton7 = new javax.swing.JRadioButton();
-        jRadioButton8 = new javax.swing.JRadioButton();
-        jRadioButton9 = new javax.swing.JRadioButton();
+        jButton26 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Initialization");
@@ -144,9 +128,6 @@ public class InitDialog extends javax.swing.JDialog {
         buttonGroup1.add(jRadioButton2);
         jRadioButton2.setText("Create new KEY file and encrypt existing PWD file");
 
-        buttonGroup1.add(jRadioButton3);
-        jRadioButton3.setText("Create new Google Drive credentials and upload existing PWD file to Google Drive");
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -159,7 +140,6 @@ public class InitDialog extends javax.swing.JDialog {
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1))
-                    .addComponent(jRadioButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jRadioButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jRadioButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 547, Short.MAX_VALUE))
                 .addContainerGap())
@@ -171,9 +151,7 @@ public class InitDialog extends javax.swing.JDialog {
                 .addComponent(jRadioButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jRadioButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 282, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 272, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
@@ -253,14 +231,9 @@ public class InitDialog extends javax.swing.JDialog {
 
         buttonGroup2.add(jRadioButton5);
         jRadioButton5.setText("Google Drive only");
-        jRadioButton5.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jRadioButton5ItemStateChanged(evt);
-            }
-        });
 
         buttonGroup2.add(jRadioButton6);
-        jRadioButton6.setText("Local file + Google Drive sync");
+        jRadioButton6.setText("Google Drive + local backup");
 
         jLabel1.setText("File location:");
 
@@ -296,8 +269,7 @@ public class InitDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton7)
-                        .addGap(4, 4, 4)))
+                        .addComponent(jButton7)))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -351,7 +323,7 @@ public class InitDialog extends javax.swing.JDialog {
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton4)
                     .addComponent(jButton3)
@@ -361,286 +333,7 @@ public class InitDialog extends javax.swing.JDialog {
 
         getContentPane().add(jPanel2, "card3");
 
-        jButton10.setText("Finish");
-        jButton10.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton10ActionPerformed(evt);
-            }
-        });
-
-        jButton11.setText("Cancel");
-        jButton11.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton11ActionPerformed(evt);
-            }
-        });
-
-        jLabel3.setText("Your KEY and PWD files initialized successfully!");
-
-        jLabel4.setText("Click Finish to save settings.");
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton11))
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 312, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton11)
-                    .addComponent(jButton10))
-                .addContainerGap())
-        );
-
-        getContentPane().add(jPanel3, "card4");
-
-        jButton12.setText("Finish");
-        jButton12.setEnabled(false);
-        jButton12.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton12ActionPerformed(evt);
-            }
-        });
-
-        jButton13.setText("Cancel");
-        jButton13.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton13ActionPerformed(evt);
-            }
-        });
-
-        jLabel5.setText("KEY file location:");
-
-        jTextField3.setEditable(false);
-
-        jButton14.setText("Create new KEY file");
-        jButton14.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton14ActionPerformed(evt);
-            }
-        });
-
-        jLabel6.setText("New KEY file location:");
-
-        jTextField4.setEditable(false);
-
-        jButton15.setText("Encrypt PWD file");
-        jButton15.setEnabled(false);
-        jButton15.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton15ActionPerformed(evt);
-            }
-        });
-
-        jLabel7.setText("Old password:");
-        jLabel7.setEnabled(false);
-
-        jPasswordField1.setEnabled(false);
-
-        jLabel8.setText("New password:");
-        jLabel8.setEnabled(false);
-
-        jPasswordField2.setEnabled(false);
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton12)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton13))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField3))
-                    .addComponent(jButton14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField4))
-                    .addComponent(jButton15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPasswordField1, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPasswordField2, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton14)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8)
-                    .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton15)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 202, Short.MAX_VALUE)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton13)
-                    .addComponent(jButton12))
-                .addContainerGap())
-        );
-
-        getContentPane().add(jPanel6, "card5");
-
-        jButton16.setText("Cancel");
-        jButton16.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton16ActionPerformed(evt);
-            }
-        });
-
-        jButton17.setText("< Back");
-        jButton17.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton17ActionPerformed(evt);
-            }
-        });
-
-        jButton18.setText("Next >");
-        jButton18.setEnabled(false);
-        jButton18.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton18ActionPerformed(evt);
-            }
-        });
-
-        jButton19.setText("Create new Google drive credentials");
-        jButton19.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton19ActionPerformed(evt);
-            }
-        });
-
-        jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("File & folder"));
-        jPanel8.setEnabled(false);
-
-        jLabel9.setText("Folder name:");
-        jLabel9.setEnabled(false);
-
-        jLabel10.setText("File name:");
-        jLabel10.setEnabled(false);
-
-        jTextField5.setEnabled(false);
-
-        jTextField6.setEnabled(false);
-
-        jButton20.setText("Create new empty PWD file on Google Drive");
-        jButton20.setEnabled(false);
-        jButton20.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton20ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(jLabel9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField5))
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(jLabel10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField6)))
-                .addContainerGap())
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton20)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton19, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel7Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton17)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton18)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton16)))
-                .addContainerGap())
-        );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton19)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 193, Short.MAX_VALUE)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton16)
-                    .addComponent(jButton18)
-                    .addComponent(jButton17))
-                .addContainerGap())
-        );
-
-        getContentPane().add(jPanel7, "card6");
-
-        jButton22.setText("Finish");
+        jButton22.setText("Next >");
         jButton22.setEnabled(false);
         jButton22.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -731,45 +424,12 @@ public class InitDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel11.setBorder(javax.swing.BorderFactory.createTitledBorder("PWD file option"));
-        jPanel11.setEnabled(false);
-
-        buttonGroup3.add(jRadioButton7);
-        jRadioButton7.setSelected(true);
-        jRadioButton7.setText("No change");
-        jRadioButton7.setEnabled(false);
-
-        buttonGroup3.add(jRadioButton8);
-        jRadioButton8.setText("Google Drive only");
-        jRadioButton8.setEnabled(false);
-
-        buttonGroup3.add(jRadioButton9);
-        jRadioButton9.setText("Local file + Google Drive sync");
-        jRadioButton9.setEnabled(false);
-
-        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
-        jPanel11.setLayout(jPanel11Layout);
-        jPanel11Layout.setHorizontalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel11Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jRadioButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jRadioButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jRadioButton9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel11Layout.setVerticalGroup(
-            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel11Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jRadioButton7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButton8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButton9)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jButton21.setText("< Back");
+        jButton21.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton21ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
@@ -780,12 +440,13 @@ public class InitDialog extends javax.swing.JDialog {
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton21)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton22)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton23))
                     .addComponent(jPanel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton24, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
-                    .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButton24, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel9Layout.setVerticalGroup(
@@ -795,16 +456,190 @@ public class InitDialog extends javax.swing.JDialog {
                 .addComponent(jButton24)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 133, Short.MAX_VALUE)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton23)
-                    .addComponent(jButton22))
+                    .addComponent(jButton22)
+                    .addComponent(jButton21))
                 .addContainerGap())
         );
 
         getContentPane().add(jPanel9, "card7");
+
+        jButton10.setText("Finish");
+        jButton10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton10ActionPerformed(evt);
+            }
+        });
+
+        jButton11.setText("Cancel");
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Your KEY and PWD files initialized successfully!");
+
+        jLabel4.setText("Click Finish to save settings.");
+
+        jLabel9.setText("   ");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton11))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 256, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton11)
+                    .addComponent(jButton10))
+                .addContainerGap())
+        );
+
+        getContentPane().add(jPanel3, "card4");
+
+        jButton12.setText("Finish");
+        jButton12.setEnabled(false);
+        jButton12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton12ActionPerformed(evt);
+            }
+        });
+
+        jButton13.setText("Cancel");
+        jButton13.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton13ActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("KEY file location:");
+
+        jTextField3.setEditable(false);
+
+        jButton14.setText("Create new KEY file");
+        jButton14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton14ActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("New KEY file location:");
+
+        jTextField4.setEditable(false);
+
+        jButton15.setText("Encrypt PWD file");
+        jButton15.setEnabled(false);
+        jButton15.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton15ActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setText("Old password:");
+        jLabel7.setEnabled(false);
+
+        jPasswordField1.setEnabled(false);
+
+        jLabel8.setText("New password:");
+        jLabel8.setEnabled(false);
+
+        jPasswordField2.setEnabled(false);
+
+        jButton26.setText("< Back");
+        jButton26.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton26ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton26)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton13))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField3))
+                    .addComponent(jButton14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField4))
+                    .addComponent(jButton15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPasswordField1, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPasswordField2, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton14)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8)
+                    .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton15)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 168, Short.MAX_VALUE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton13)
+                    .addComponent(jButton12)
+                    .addComponent(jButton26))
+                .addContainerGap())
+        );
+
+        getContentPane().add(jPanel6, "card5");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -822,10 +657,6 @@ public class InitDialog extends javax.swing.JDialog {
             jTextField3.setText(Vars.getProp("KeysFilePath"));
             cl.show(getContentPane(), "card5");
         }
-        if (jRadioButton3.isSelected()) {
-            jTextField9.setText(Vars.getProp("PwdsFilePath"));
-            cl.show(getContentPane(), "card7");
-        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -836,9 +667,14 @@ public class InitDialog extends javax.swing.JDialog {
             return;
         }
 
-        if (!jRadioButton5.isSelected()) {
+        if (jRadioButton5.isSelected()) {
+            if (pwd == null || jTextField1.getText().length() == 0) {
+                JOptionPane.showMessageDialog(this, "Please create new empty PWD file or choose existing one!");
+                return;
+            }
+        } else {
             file = new File(jTextField1.getText());
-            if (!file.exists() || jTextField1.getText().length() == 0) {
+            if (pwd == null || !file.exists() || jTextField1.getText().length() == 0) {
                 JOptionPane.showMessageDialog(this, "PWD file does not exists!");
                 return;
             }
@@ -847,11 +683,7 @@ public class InitDialog extends javax.swing.JDialog {
         CardLayout cl = (CardLayout) getContentPane().getLayout();
         if (jRadioButton4.isSelected()) {
             cl.show(getContentPane(), "card4");
-        }
-        if (jRadioButton5.isSelected()) {
-            cl.show(getContentPane(), "card6");
-        }
-        if (jRadioButton6.isSelected()) {
+        } else {
             jTextField9.setText(jTextField1.getText());
             cl.show(getContentPane(), "card7");
         }
@@ -874,7 +706,7 @@ public class InitDialog extends javax.swing.JDialog {
             if (file.exists()) {
                 jTextField2.setText(jfc.getSelectedFile().getPath());
                 key = Vars.LoadFile(jfc.getSelectedFile().getPath());
-                JOptionPane.showMessageDialog(this, "KEY file \"" + jfc.getSelectedFile().getPath() + "\" will be used.");
+                //JOptionPane.showMessageDialog(this, "KEY file \"" + jfc.getSelectedFile().getPath() + "\" will be used.");
             } else {
                 JOptionPane.showMessageDialog(this, "KEY file \"" + jfc.getSelectedFile().getPath() + "\" does not exists!");
             }
@@ -883,19 +715,18 @@ public class InitDialog extends javax.swing.JDialog {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         FileOutputStream fos;
-        String filen = Vars.PropPath + "/key.dat";
+        int kfnum = 1;
+        String filen = Vars.PropPath + "/key-" + kfnum + ".dat";
         try {
             File f = new File(filen);
             while (f.exists()) {
-                JOptionPane.showMessageDialog(this, "KEY file \"" + filen + "\" already exists.");
-                JFileChooser jfc = new JFileChooser(Vars.PropPath);
-                jfc.showSaveDialog(null);
-                if (jfc.getSelectedFile() != null) {
-                    filen = jfc.getSelectedFile().getPath();
-                    f = new File(filen);
-                } else {
+                kfnum++;
+                if (kfnum == 1000) {
+                    JOptionPane.showMessageDialog(this, "Error creating KEY file!");
                     return;
                 }
+                filen = Vars.PropPath + "/key-" + kfnum + ".dat";
+                f = new File(filen);
             }
             fos = new FileOutputStream(filen);
             for (int i = 0; i < 65536; i++) {
@@ -905,27 +736,13 @@ public class InitDialog extends javax.swing.JDialog {
             fos.close();
             key = Vars.LoadFile(filen);
             jTextField2.setText(filen);
-            JOptionPane.showMessageDialog(this, "KEY file \"" + filen + "\" created successfully.");
+            //JOptionPane.showMessageDialog(this, "KEY file \"" + filen + "\" created successfully.");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(InitDialog.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(InitDialog.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton6ActionPerformed
-
-    private void jRadioButton5ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jRadioButton5ItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
-            jLabel1.setEnabled(false);
-            jTextField1.setEnabled(false);
-            jButton7.setEnabled(false);
-            jButton8.setEnabled(false);
-        } else {
-            jLabel1.setEnabled(true);
-            jTextField1.setEnabled(true);
-            jButton7.setEnabled(true);
-            jButton8.setEnabled(true);
-        }
-    }//GEN-LAST:event_jRadioButton5ItemStateChanged
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         if (key == null || jTextField2.getText().length() == 0) {
@@ -943,12 +760,14 @@ public class InitDialog extends javax.swing.JDialog {
             File f = new File(jfc.getSelectedFile().getPath());
             if (f.exists()) {
                 pwd = Vars.LoadFile(jfc.getSelectedFile().getPath());
+                Vars.MasterPassword = "";
                 if (Vars.DecryptBytes(key, pwd) != null) {
                     jTextField1.setText(jfc.getSelectedFile().getPath());
-                    JOptionPane.showMessageDialog(this, "PWD file \"" + jfc.getSelectedFile().getPath() + "\" will be used.");
+                    //JOptionPane.showMessageDialog(this, "PWD file \"" + jfc.getSelectedFile().getPath() + "\" will be used.");
                 } else {
                     jTextField1.setText("");
                     JOptionPane.showMessageDialog(this, "PWD file \"" + jfc.getSelectedFile().getPath() + "\" is wrong and will not be used.");
+                    Vars.MasterPassword = "";
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "PWD file does not exists!");
@@ -959,24 +778,37 @@ public class InitDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        String filen;
-        if (jTextField1.getText().length() == 0) {
-            filen = Vars.PropPath + "/pwd.dat";
-        } else {
-            filen = jTextField1.getText();
-        }
+        int kfnum = 1;
+        String filen = Vars.PropPath + "/pwd-" + kfnum + ".dat";
 
         if (key == null || jTextField2.getText().length() == 0) {
             JOptionPane.showMessageDialog(this, "KEY file does not exists!");
             return;
         }
 
+        File f = new File(filen);
+        while (f.exists()) {
+            kfnum++;
+            if (kfnum == 1000) {
+                JOptionPane.showMessageDialog(this, "Error creating PWD file!");
+                return;
+            }
+            filen = Vars.PropPath + "/pwd-" + kfnum + ".dat";
+            f = new File(filen);
+        }
+
         byte[] defile = new byte[0];
+        Vars.MasterPassword = "";
         pwd = Vars.EncryptBytes(key, defile);
+
         if (pwd != null) {
-            Vars.SaveFile(filen, pwd);
-            jTextField1.setText(filen);
-            JOptionPane.showMessageDialog(this, "PWD file \"" + filen + "\" created successfully.");
+            if (jRadioButton5.isSelected()) {
+                jTextField1.setText("New empty PWD file will be created on Google Drive.");
+            } else {
+                Vars.SaveFile(filen, pwd);
+                jTextField1.setText(filen);
+                //JOptionPane.showMessageDialog(this, "PWD file \"" + filen + "\" created successfully.");
+            }
         }
     }//GEN-LAST:event_jButton8ActionPerformed
 
@@ -990,6 +822,10 @@ public class InitDialog extends javax.swing.JDialog {
         if (jRadioButton5.isSelected()) {
             Vars.setProp("PwdsFileType", "G");
             Vars.setProp("KeysFilePath", jTextField2.getText());
+            if (!jTextField9.getText().equals("New empty PWD file will be created on Google Drive.")) {
+                File f = new File(jTextField1.getText());
+                f.renameTo(new File(jTextField1.getText() + ".old"));
+            }
             Vars.prop.remove("PwdsFilePath");
         }
 
@@ -1010,8 +846,8 @@ public class InitDialog extends javax.swing.JDialog {
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
         if (!Vars.getProp("PwdsFileType").equals("G")) {
-            Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
-            Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
+            //Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
+            //Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
         } else {
             JOptionPane.showMessageDialog(this, "Sync with Google!");
         }
@@ -1044,7 +880,7 @@ public class InitDialog extends javax.swing.JDialog {
             }
             fos.close();
             jTextField4.setText(filen);
-            JOptionPane.showMessageDialog(this, "KEY file \"" + filen + "\" created successfully.");
+            //JOptionPane.showMessageDialog(this, "KEY file \"" + filen + "\" created successfully.");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(InitDialog.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -1091,175 +927,15 @@ public class InitDialog extends javax.swing.JDialog {
         jPasswordField2.setEnabled(false);
         jButton12.setEnabled(true);
 
-        JOptionPane.showMessageDialog(this, "PWD file \"" + Vars.getProp("PwdsFilePath") + "\" encrypted and saved successfully.");
+        //JOptionPane.showMessageDialog(this, "PWD file \"" + Vars.getProp("PwdsFilePath") + "\" encrypted and saved successfully.");
     }//GEN-LAST:event_jButton15ActionPerformed
 
-    private void jButton16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton16ActionPerformed
-        dispose();
-    }//GEN-LAST:event_jButton16ActionPerformed
-
-    private void jButton17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton17ActionPerformed
-        CardLayout cl = (CardLayout) getContentPane().getLayout();
-        cl.show(getContentPane(), "card3");
-    }//GEN-LAST:event_jButton17ActionPerformed
-
-    private void jButton18ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton18ActionPerformed
+    private void jButton22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton22ActionPerformed
+        if (jRadioButton5.isSelected() && !jTextField9.getText().equals("New empty PWD file will be created on Google Drive.")) {
+            jLabel9.setText("Please note that your old PWD file will be renamed to %.old");
+        }
         CardLayout cl = (CardLayout) getContentPane().getLayout();
         cl.show(getContentPane(), "card4");
-    }//GEN-LAST:event_jButton18ActionPerformed
-
-    private void jButton19ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton19ActionPerformed
-        HttpTransport httpTransport = new NetHttpTransport();
-        JacksonFactory jsonFactory = new JacksonFactory();
-
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                httpTransport, jsonFactory, Vars.CLIENT_ID, Vars.CLIENT_SECRET, Arrays.asList(DriveScopes.DRIVE))
-                .setAccessType("offline")
-                .setApprovalPrompt("force").build();
-
-        AuthorizationCodeInstalledApp app = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver());
-
-        Credential credential = null;
-        try {
-            credential = app.authorize("user");
-        } catch (IOException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        if (credential == null) {
-            JOptionPane.showMessageDialog(null, "Google drive access failed!");
-            return;
-        }
-
-        Vars.setProp("RefreshToken", credential.getRefreshToken());
-
-        jButton19.setEnabled(false);
-        jPanel8.setEnabled(true);
-        jLabel9.setEnabled(true);
-        jLabel10.setEnabled(true);
-        jTextField5.setEnabled(true);
-        jTextField6.setEnabled(true);
-        jButton20.setEnabled(true);
-    }//GEN-LAST:event_jButton19ActionPerformed
-
-    private void jButton20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton20ActionPerformed
-        if (jTextField6.getText().length() == 0) {
-            JOptionPane.showMessageDialog(this, "File name can not be empty!");
-            return;
-        }
-
-        byte[] defile = new byte[0];
-        pwd = Vars.EncryptBytes(key, defile);
-
-        JacksonFactory jsonFactory = new JacksonFactory();
-        HttpTransport httpTransport = new NetHttpTransport();
-        GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
-                .setTransport(httpTransport).setClientSecrets(Vars.CLIENT_ID, Vars.CLIENT_SECRET).build();
-        credential.setRefreshToken(Vars.getProp("RefreshToken"));
-
-        Drive service = new Drive.Builder(httpTransport, jsonFactory, credential).setApplicationName(Vars.Version).build();
-
-        String folderid = "";
-
-        if (jTextField5.getText().length() > 0) {
-            com.google.api.services.drive.model.File body = new com.google.api.services.drive.model.File();
-            body.setTitle(jTextField5.getText());
-            body.setDescription("MyPwd Folder");
-            body.setMimeType("application/vnd.google-apps.folder");
-
-            try {
-                com.google.api.services.drive.model.File file = service.files().insert(body).execute();
-                if (file != null) {
-                    folderid = file.getId();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Error creating folder!");
-                    return;
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(InitDialog.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-        com.google.api.services.drive.model.File body = new com.google.api.services.drive.model.File();
-        body.setTitle(jTextField6.getText());
-        body.setDescription("MyPwd PWD file");
-        body.setMimeType("text/plain");
-        if (folderid.length() > 0) {
-            body.setParents(Arrays.asList(new ParentReference().setId(folderid)));
-        }
-
-        AbstractInputStreamContent mediaContent = new AbstractInputStreamContent("text/plain") {
-            int sp = -1;
-
-            @Override
-            public InputStream getInputStream() throws IOException {
-                InputStream is = new InputStream() {
-
-                    @Override
-                    public int read() throws IOException {
-                        sp++;
-                        if (sp < pwd.length) {
-                            return pwd[sp];
-                        } else {
-                            return -1;
-                        }
-                    }
-                };
-                return is;
-            }
-
-            @Override
-            public String getType() {
-                return "text/plain";
-            }
-
-            @Override
-            public long getLength() throws IOException {
-                return pwd.length;
-            }
-
-            @Override
-            public boolean retrySupported() {
-                return false;
-            }
-        };
-
-        String fileid = "";
-        try {
-            com.google.api.services.drive.model.File file = service.files().insert(body, mediaContent).execute();
-            if (file != null) {
-                fileid = file.getId();
-            } else {
-                JOptionPane.showMessageDialog(this, "Error creating file!");
-                return;
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(InitDialog.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        Vars.setProp("GoogleDriveFileID", fileid);
-
-        jPanel8.setEnabled(false);
-        jLabel9.setEnabled(false);
-        jLabel10.setEnabled(false);
-        jTextField5.setEnabled(false);
-        jTextField6.setEnabled(false);
-        jButton20.setEnabled(false);
-        jButton18.setEnabled(true);
-    }//GEN-LAST:event_jButton20ActionPerformed
-
-    private void jButton22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton22ActionPerformed
-        if (jRadioButton8.isSelected()) {
-            Vars.setProp("PwdsFileType", "G");
-            File f = new File(Vars.getProp("PwdsFilePath"));
-            f.delete();
-            Vars.prop.remove("PwdsFilePath");
-        }
-        if (jRadioButton9.isSelected()) {
-            Vars.setProp("PwdsFileType", "LG");
-        }
-        Vars.SaveProperties();
-        dispose();
     }//GEN-LAST:event_jButton22ActionPerformed
 
     private void jButton23ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton23ActionPerformed
@@ -1308,6 +984,9 @@ public class InitDialog extends javax.swing.JDialog {
             return;
         }
 
+        SImg simg = new SImg();
+        simg.siShow();
+
         JacksonFactory jsonFactory = new JacksonFactory();
         HttpTransport httpTransport = new NetHttpTransport();
         GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
@@ -1330,6 +1009,7 @@ public class InitDialog extends javax.swing.JDialog {
                     folderid = file.getId();
                 } else {
                     JOptionPane.showMessageDialog(this, "Error creating folder!");
+                    simg.siClose();
                     return;
                 }
             } catch (IOException ex) {
@@ -1345,8 +1025,43 @@ public class InitDialog extends javax.swing.JDialog {
             body.setParents(Arrays.asList(new ParentReference().setId(folderid)));
         }
 
-        File fileContent = new File(jTextField9.getText());
-        FileContent mediaContent = new FileContent("text/plain", fileContent);
+        //File fileContent = new File(jTextField9.getText());
+        //FileContent mediaContent = new FileContent("text/plain", fileContent);
+        AbstractInputStreamContent mediaContent = new AbstractInputStreamContent("text/plain") {
+            int sp = -1;
+
+            @Override
+            public InputStream getInputStream() throws IOException {
+                InputStream is = new InputStream() {
+
+                    @Override
+                    public int read() throws IOException {
+                        sp++;
+                        if (sp < pwd.length) {
+                            return pwd[sp];
+                        } else {
+                            return -1;
+                        }
+                    }
+                };
+                return is;
+            }
+
+            @Override
+            public String getType() {
+                return "text/plain";
+            }
+
+            @Override
+            public long getLength() throws IOException {
+                return pwd.length;
+            }
+
+            @Override
+            public boolean retrySupported() {
+                return false;
+            }
+        };
 
         String fileid = "";
         try {
@@ -1355,6 +1070,7 @@ public class InitDialog extends javax.swing.JDialog {
                 fileid = file.getId();
             } else {
                 JOptionPane.showMessageDialog(this, "Error creating file!");
+                simg.siClose();
                 return;
             }
         } catch (IOException ex) {
@@ -1372,11 +1088,20 @@ public class InitDialog extends javax.swing.JDialog {
         jTextField9.setEnabled(false);
         jButton25.setEnabled(false);
         jButton22.setEnabled(true);
-        jPanel11.setEnabled(true);
-        jRadioButton7.setEnabled(true);
-        jRadioButton8.setEnabled(true);
-        jRadioButton9.setEnabled(true);
+        jButton21.setEnabled(false);
+
+        simg.siClose();
     }//GEN-LAST:event_jButton25ActionPerformed
+
+    private void jButton21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton21ActionPerformed
+        CardLayout cl = (CardLayout) getContentPane().getLayout();
+        cl.show(getContentPane(), "card3");
+    }//GEN-LAST:event_jButton21ActionPerformed
+
+    private void jButton26ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton26ActionPerformed
+        CardLayout cl = (CardLayout) getContentPane().getLayout();
+        cl.show(getContentPane(), "card2");
+    }//GEN-LAST:event_jButton26ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
@@ -1389,16 +1114,13 @@ public class InitDialog extends javax.swing.JDialog {
     private javax.swing.JButton jButton13;
     private javax.swing.JButton jButton14;
     private javax.swing.JButton jButton15;
-    private javax.swing.JButton jButton16;
-    private javax.swing.JButton jButton17;
-    private javax.swing.JButton jButton18;
-    private javax.swing.JButton jButton19;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton20;
+    private javax.swing.JButton jButton21;
     private javax.swing.JButton jButton22;
     private javax.swing.JButton jButton23;
     private javax.swing.JButton jButton24;
     private javax.swing.JButton jButton25;
+    private javax.swing.JButton jButton26;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
@@ -1407,7 +1129,6 @@ public class InitDialog extends javax.swing.JDialog {
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -1421,32 +1142,23 @@ public class InitDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
-    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JPasswordField jPasswordField2;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JRadioButton jRadioButton4;
     private javax.swing.JRadioButton jRadioButton5;
     private javax.swing.JRadioButton jRadioButton6;
-    private javax.swing.JRadioButton jRadioButton7;
-    private javax.swing.JRadioButton jRadioButton8;
-    private javax.swing.JRadioButton jRadioButton9;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
     private javax.swing.JTextField jTextField7;
     private javax.swing.JTextField jTextField8;
     private javax.swing.JTextField jTextField9;

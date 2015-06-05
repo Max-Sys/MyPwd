@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 public class App {
 
@@ -47,12 +49,16 @@ public class App {
             }
         }
 
-        if (Vars.getProp("PwdsFileType").equals("L")) {
-            Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
-            Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
-        }
-        if (Vars.getProp("PwdsFileType").equals("G")) {
-            Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
+        Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
+        if (Vars.KEY == null) {
+            JOptionPane.showMessageDialog(null, "KEY file not found. Please choose one.");
+            JFileChooser jfc = new JFileChooser();
+            jfc.setSelectedFile(new File(Vars.getProp("KeysFilePath")));
+            int r = jfc.showOpenDialog(null);
+            if (r == JFileChooser.CANCEL_OPTION || !(new File(jfc.getSelectedFile().getPath())).exists()) {
+                System.exit(0);
+            }
+            Vars.KEY = Vars.LoadFile(jfc.getSelectedFile().getPath());
         }
 
         MainFrame frm = new MainFrame();
