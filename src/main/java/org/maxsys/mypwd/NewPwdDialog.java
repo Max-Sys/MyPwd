@@ -1,6 +1,5 @@
 package org.maxsys.mypwd;
 
-import java.nio.charset.Charset;
 import javax.swing.table.DefaultTableModel;
 
 public class NewPwdDialog extends javax.swing.JDialog {
@@ -142,7 +141,7 @@ public class NewPwdDialog extends javax.swing.JDialog {
         for (int ri = 0; ri < jTable1.getRowCount(); ri++) {
             String n = (String) jTable1.getValueAt(ri, 0);
             String v = ((PwdStr) jTable1.getValueAt(ri, 1)).getPwd();
-            pwd.setField(n, v.getBytes());
+            pwd.setField(n, v);
         }
 
         Vars.addPwdItem(pwd.getPwdItem());

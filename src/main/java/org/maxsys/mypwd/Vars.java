@@ -319,4 +319,44 @@ public class Vars {
             Logger.getLogger(Vars.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public static String getHexString(String str) {
+        String hexstr = "";
+        int i = 0;
+        while (i < str.length()) {
+            Integer ic = str.codePointAt(i);
+            hexstr = hexstr + Integer.toHexString(ic);
+            hexstr = hexstr + "|";
+            i++;
+        }
+        return hexstr;
+    }
+
+    public static String getStringFromHex(String hexstr) {
+        if (hexstr == null) {
+            return "";
+        }
+        String str = "";
+        String s = "";
+        int ci;
+        char c;
+        int i = 0;
+        while (i < hexstr.length()) {
+            if (!hexstr.substring(i, i + 1).equals("|")) {
+                s = s + hexstr.substring(i, i + 1);
+                i++;
+            } else {
+                try {
+                    ci = Integer.parseInt(s, 16);
+                } catch (NumberFormatException ex) {
+                    return "HEX parsing error";
+                }
+                c = (char) ci;
+                str = str + c;
+                s = "";
+                i++;
+            }
+        }
+        return str;
+    }
 }

@@ -61,6 +61,8 @@ public class App {
             Vars.KEY = Vars.LoadFile(jfc.getSelectedFile().getPath());
         }
 
+        JOptionPane.showMessageDialog(null, "Длинные имена глючат!");
+        
         MainFrame frm = new MainFrame();
         frm.setLocationRelativeTo(null);
         frm.setVisible(true);

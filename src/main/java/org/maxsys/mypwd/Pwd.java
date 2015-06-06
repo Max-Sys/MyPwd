@@ -1,17 +1,16 @@
 package org.maxsys.mypwd;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public final class Pwd {
 
-    private final String name;
-    private final LinkedHashMap<String, byte[]> fields;
+    private final String h_name;
+    private final LinkedHashMap<String, String> h_fields;
 
     public Pwd(String name) {
-        this.name = name;
-        this.fields = new LinkedHashMap<>();
+        this.h_name = Vars.getHexString(name);
+        this.h_fields = new LinkedHashMap<>();
     }
 
     public Pwd(byte[] pwdItem) {
@@ -28,9 +27,9 @@ public final class Pwd {
             ns += (char) pwdItem[ic];
             ic++;
         }
-        this.name = ns;
+        this.h_name = ns;
 
-        this.fields = new LinkedHashMap<>();
+        this.h_fields = new LinkedHashMap<>();
 
         while (ic < pwdItem.length) {
             lb[0] = pwdItem[ic];
@@ -50,28 +49,33 @@ public final class Pwd {
             ic++;
             li = GetLengthInInt(lb);
             nic = ic + li;
-            byte[] fi = new byte[li];
+//            byte[] fi = new byte[li];
+//            while (ic < nic) {
+//                fi[ic + li - nic] = pwdItem[ic];
+//                ic++;
+//            }
+            String fi = "";
             while (ic < nic) {
-                fi[ic + li - nic] = pwdItem[ic];
+                fi += (char) pwdItem[ic];
                 ic++;
             }
-            setField(fn, fi);
+            this.h_fields.put(fn, fi);
         }
     }
 
-    public void setField(String fieldName, byte[] fieldValue) {
-        this.fields.put(fieldName, fieldValue);
+    public void setField(String fieldName, String fieldValue) {
+        this.h_fields.put(Vars.getHexString(fieldName), Vars.getHexString(fieldValue));
     }
 
-    public byte[] getField(String fieldName) {
-        return this.fields.get(fieldName);
+    public String getField(String fieldName) {
+        return Vars.getStringFromHex(this.h_fields.get(Vars.getHexString(fieldName)));
     }
 
     public String[] getFieldNames() {
-        String[] names = new String[this.fields.size()];
+        String[] names = new String[this.h_fields.size()];
         int i = 0;
-        for (String s : this.fields.keySet()) {
-            names[i] = s;
+        for (String s : this.h_fields.keySet()) {
+            names[i] = Vars.getStringFromHex(s);
             i++;
         }
         return names;
@@ -79,25 +83,25 @@ public final class Pwd {
 
     public byte[] getPwdItem() {
         ArrayList<Byte> bItem = new ArrayList<>();
-        byte[] nl = GetLengthInBytes(this.name.getBytes().length);
+        byte[] nl = GetLengthInBytes(this.h_name.getBytes().length);
 
         bItem.add(nl[0]);
         bItem.add(nl[1]);
-        for (byte b : this.name.getBytes()) {
+        for (byte b : this.h_name.getBytes()) {
             bItem.add(b);
         }
 
-        for (String fn : this.fields.keySet()) {
+        for (String fn : this.h_fields.keySet()) {
             byte[] ekl = GetLengthInBytes(fn.getBytes().length);
             bItem.add(ekl[0]);
             bItem.add(ekl[1]);
             for (byte b : fn.getBytes()) {
                 bItem.add(b);
             }
-            byte[] evl = GetLengthInBytes(getField(fn).length);
+            byte[] evl = GetLengthInBytes(this.h_fields.get(fn).getBytes().length);
             bItem.add(evl[0]);
             bItem.add(evl[1]);
-            for (byte b : getField(fn)) {
+            for (byte b : this.h_fields.get(fn).getBytes()) {
                 bItem.add(b);
             }
         }
@@ -125,11 +129,11 @@ public final class Pwd {
     }
 
     public String getName() {
-        return this.name;
+        return Vars.getStringFromHex(this.h_name);
     }
 
     @Override
     public String toString() {
-        return this.name;
+        return Vars.getStringFromHex(this.h_name);
     }
 }

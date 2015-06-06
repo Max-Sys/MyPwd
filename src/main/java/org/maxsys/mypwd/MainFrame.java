@@ -20,6 +20,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -568,7 +569,7 @@ public class MainFrame extends javax.swing.JFrame {
         Pwd pwd = (Pwd) jList2.getSelectedValue();
 
         for (String fn : pwd.getFieldNames()) {
-            PwdStr pstr = new PwdStr(new String(pwd.getField(fn)));
+            PwdStr pstr = new PwdStr(pwd.getField(fn));
             Object[] row = new Object[2];
             row[0] = fn;
             row[1] = pstr;
