@@ -1,5 +1,6 @@
 package org.maxsys.mypwd;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class NewPwdDialog extends javax.swing.JDialog {
@@ -136,6 +137,14 @@ public class NewPwdDialog extends javax.swing.JDialog {
             return;
         }
 
+        for (byte[] pwditem : Vars.getPwdItems()) {
+            Pwd p = new Pwd(pwditem);
+            if (p.getName().equals(jTextField1.getText())) {
+                JOptionPane.showMessageDialog(this, "Pwd item \"" + jTextField1.getText() + "\" already exists!");
+                return;
+            }
+        }
+        
         Pwd pwd = new Pwd(jTextField1.getText());
 
         for (int ri = 0; ri < jTable1.getRowCount(); ri++) {

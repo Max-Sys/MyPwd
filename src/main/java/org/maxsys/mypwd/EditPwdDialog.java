@@ -70,7 +70,6 @@ public class EditPwdDialog extends javax.swing.JDialog {
 
         jLabel1.setText("Name:");
 
-        jTable1.setFocusable(false);
         jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -121,6 +120,7 @@ public class EditPwdDialog extends javax.swing.JDialog {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jSeparator1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1)))
@@ -161,8 +161,6 @@ public class EditPwdDialog extends javax.swing.JDialog {
             return;
         }
 
-        Vars.removePwdItem(oldPwdName);
-        
         Pwd pwd = new Pwd(jTextField1.getText());
 
         for (int ri = 0; ri < jTable1.getRowCount(); ri++) {
@@ -171,7 +169,7 @@ public class EditPwdDialog extends javax.swing.JDialog {
             pwd.setField(n, v);
         }
 
-        Vars.addPwdItem(pwd.getPwdItem());
+        Vars.editPwdItem(oldPwdName, pwd.getPwdItem());
 
         dispose();
     }//GEN-LAST:event_jButton2ActionPerformed

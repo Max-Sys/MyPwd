@@ -1,14 +1,5 @@
 package org.maxsys.mypwd;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.http.AbstractInputStreamContent;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -18,7 +9,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -68,7 +58,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void RefreshList() {
         if (!Vars.getProp("PwdsFileType").equals("L")) {
-            getPwdFromGoogleDrive();
+            Vars.getPwdFromGoogleDrive();
         }
 
         if (!Vars.isPWDLoaded()) {
@@ -123,124 +113,6 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
         jList2.setModel(lm);
-    }
-
-    private void getPwdFromGoogleDrive() {
-        SImg simg = new SImg();
-        simg.siShow();
-
-        JacksonFactory jsonFactory = new JacksonFactory();
-        HttpTransport httpTransport = new NetHttpTransport();
-        GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
-                .setTransport(httpTransport).setClientSecrets(Vars.CLIENT_ID, Vars.CLIENT_SECRET).build();
-        credential.setRefreshToken(Vars.getProp("RefreshToken"));
-
-        Drive service = new Drive.Builder(httpTransport, jsonFactory, credential).setApplicationName(Vars.Version).build();
-
-        File file = null;
-        try {
-            file = service.files().get(Vars.getProp("GoogleDriveFileID")).execute();
-        } catch (IOException | NullPointerException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        if (file == null) {
-            simg.siClose();
-            JOptionPane.showMessageDialog(null, "Failed to access PWD file on Google Drive!");
-            return;
-        }
-
-        String pwd = "";
-
-        try {
-            HttpResponse resp = service.getRequestFactory().buildGetRequest(new GenericUrl(file.getDownloadUrl())).execute();
-            try (InputStream is = resp.getContent()) {
-                int b = 0;
-                while (b >= 0) {
-                    b = is.read();
-                    if (b != -1) {
-                        pwd += (char) b;
-                    }
-                }
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        //Vars.PWD = pwd.getBytes();
-        Vars.LoadPWD(pwd.getBytes());
-
-        simg.siClose();
-    }
-
-    private void updatePwdOnGoogleDrive() {
-        SImg simg = new SImg();
-        simg.siShow();
-
-        JacksonFactory jsonFactory = new JacksonFactory();
-        HttpTransport httpTransport = new NetHttpTransport();
-        GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
-                .setTransport(httpTransport).setClientSecrets(Vars.CLIENT_ID, Vars.CLIENT_SECRET).build();
-        credential.setRefreshToken(Vars.getProp("RefreshToken"));
-
-        Drive service = new Drive.Builder(httpTransport, jsonFactory, credential).setApplicationName(Vars.Version).build();
-
-        File file = null;
-        try {
-            file = service.files().get(Vars.getProp("GoogleDriveFileID")).execute();
-        } catch (IOException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        if (file == null) {
-            simg.siClose();
-            return;
-        }
-
-        AbstractInputStreamContent mediaContent = new AbstractInputStreamContent("text/plain") {
-            int sp = -1;
-
-            @Override
-            public InputStream getInputStream() throws IOException {
-                InputStream is = new InputStream() {
-
-                    @Override
-                    public int read() throws IOException {
-                        sp++;
-                        if (sp < Vars.getPWDLength()) {
-                            //return Vars.PWD[sp];
-                            return Vars.getPWDByte(sp);
-                        } else {
-                            return -1;
-                        }
-                    }
-                };
-                return is;
-            }
-
-            @Override
-            public String getType() {
-                return "text/plain";
-            }
-
-            @Override
-            public long getLength() throws IOException {
-                return Vars.getPWDLength();
-            }
-
-            @Override
-            public boolean retrySupported() {
-                return false;
-            }
-        };
-
-        try {
-            service.files().update(Vars.getProp("GoogleDriveFileID"), file, mediaContent).execute();
-        } catch (IOException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        simg.siClose();
     }
 
     private class showtimer implements Runnable {
@@ -551,15 +423,13 @@ public class MainFrame extends javax.swing.JFrame {
         dlg.setVisible(true);
 
         if (Vars.getProp("PwdsFileType").equals("L")) {
-            //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
             Vars.SavePWD();
         }
         if (Vars.getProp("PwdsFileType").equals("G")) {
-            updatePwdOnGoogleDrive();
+            Vars.updatePwdOnGoogleDrive();
         }
         if (Vars.getProp("PwdsFileType").equals("LG")) {
-            updatePwdOnGoogleDrive();
-            //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+            Vars.updatePwdOnGoogleDrive();
             Vars.SavePWD();
         }
 
@@ -669,15 +539,13 @@ public class MainFrame extends javax.swing.JFrame {
         Vars.removePwdItem(pwd.getName());
 
         if (Vars.getProp("PwdsFileType").equals("L")) {
-            //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
             Vars.SavePWD();
         }
         if (Vars.getProp("PwdsFileType").equals("G")) {
-            updatePwdOnGoogleDrive();
+            Vars.updatePwdOnGoogleDrive();
         }
         if (Vars.getProp("PwdsFileType").equals("LG")) {
-            updatePwdOnGoogleDrive();
-            //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+            Vars.updatePwdOnGoogleDrive();
             Vars.SavePWD();
         }
 
@@ -685,12 +553,21 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
+        if (JOptionPane.showConfirmDialog(this, "Warning! All existing items will be deleted! Are you sure you want to do this?", "Confirm item remove", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION) {
+            return;
+        }
+
         JFileChooser jfc = new JFileChooser(Vars.PropPath);
         int r = jfc.showOpenDialog(this);
 
         if (r == JFileChooser.CANCEL_OPTION || jfc.getSelectedFile() == null) {
             return;
         }
+
+        SImg simg = new SImg();
+        simg.siShow();
+
+        Vars.NewPWD();
 
         String filen = jfc.getSelectedFile().getPath();
         try {
@@ -734,8 +611,18 @@ public class MainFrame extends javax.swing.JFrame {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
-        Vars.SavePWD();
+        simg.siClose();
+
+        if (Vars.getProp("PwdsFileType").equals("L")) {
+            Vars.SavePWD();
+        }
+        if (Vars.getProp("PwdsFileType").equals("G")) {
+            Vars.updatePwdOnGoogleDrive();
+        }
+        if (Vars.getProp("PwdsFileType").equals("LG")) {
+            Vars.updatePwdOnGoogleDrive();
+            Vars.SavePWD();
+        }
 
         RefreshList();
     }//GEN-LAST:event_jMenuItem11ActionPerformed
@@ -754,10 +641,10 @@ public class MainFrame extends javax.swing.JFrame {
             Vars.SavePWD();
         }
         if (Vars.getProp("PwdsFileType").equals("G")) {
-            updatePwdOnGoogleDrive();
+            Vars.updatePwdOnGoogleDrive();
         }
         if (Vars.getProp("PwdsFileType").equals("LG")) {
-            updatePwdOnGoogleDrive();
+            Vars.updatePwdOnGoogleDrive();
             //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
             Vars.SavePWD();
         }
@@ -780,10 +667,10 @@ public class MainFrame extends javax.swing.JFrame {
                 Vars.SavePWD();
             }
             if (Vars.getProp("PwdsFileType").equals("G")) {
-                updatePwdOnGoogleDrive();
+                Vars.updatePwdOnGoogleDrive();
             }
             if (Vars.getProp("PwdsFileType").equals("LG")) {
-                updatePwdOnGoogleDrive();
+                Vars.updatePwdOnGoogleDrive();
                 //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
                 Vars.SavePWD();
             }

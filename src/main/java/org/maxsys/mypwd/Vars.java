@@ -1,18 +1,28 @@
 package org.maxsys.mypwd;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.http.AbstractInputStreamContent;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.drive.Drive;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 public class Vars {
 
-    public static String Version = "MyPwd 0.9-0 b";
+    public static String Version = "MyPwd 1.00-RC1";
     public static String MasterPassword = "";
     private static byte[] KEY;
     private static byte[] PWD;
@@ -80,11 +90,32 @@ public class Vars {
         if (items == null) {
             return;
         }
-        PWD = EncryptBytes(KEY, new byte[0]);
+        NewPWD();
         for (byte[] item : items) {
             Pwd p = new Pwd(item);
             if (!p.getName().equals(name)) {
                 addPwdItem(item);
+            }
+        }
+
+        simg.siClose();
+    }
+
+    public static void editPwdItem(String name, byte[] newpwditem) {
+        SImg simg = new SImg();
+        simg.siShow();
+
+        ArrayList<byte[]> items = getPwdItems();
+        if (items == null) {
+            return;
+        }
+        NewPWD();
+        for (byte[] item : items) {
+            Pwd p = new Pwd(item);
+            if (!p.getName().equals(name)) {
+                addPwdItem(item);
+            } else {
+                addPwdItem(newpwditem);
             }
         }
 
@@ -346,10 +377,6 @@ public class Vars {
         PWD = LoadFile(getProp("PwdsFilePath"));
     }
 
-    public static void LoadPWD(byte[] bytes) {
-        PWD = bytes;
-    }
-
     public static void SavePWD() {
         SaveFile(getProp("PwdsFilePath"), PWD);
     }
@@ -366,14 +393,126 @@ public class Vars {
         PWD = null;
     }
 
-    public static int getPWDByte(int sp) {
-        return PWD[sp];
+    public static void NewPWD() {
+        PWD = EncryptBytes(KEY, new byte[0]);
     }
 
-    public static int getPWDLength() {
-        return PWD.length;
+    public static void getPwdFromGoogleDrive() {
+        SImg simg = new SImg();
+        simg.siShow();
+
+        JacksonFactory jsonFactory = new JacksonFactory();
+        HttpTransport httpTransport = new NetHttpTransport();
+        GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
+                .setTransport(httpTransport).setClientSecrets(Vars.CLIENT_ID, Vars.CLIENT_SECRET).build();
+        credential.setRefreshToken(Vars.getProp("RefreshToken"));
+
+        Drive service = new Drive.Builder(httpTransport, jsonFactory, credential).setApplicationName(Vars.Version).build();
+
+        com.google.api.services.drive.model.File file = null;
+        try {
+            file = service.files().get(Vars.getProp("GoogleDriveFileID")).execute();
+        } catch (IOException | NullPointerException ex) {
+            Logger.getLogger(Vars.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        if (file == null) {
+            simg.siClose();
+            JOptionPane.showMessageDialog(null, "Failed to access PWD file on Google Drive!");
+            return;
+        }
+
+        String pwd = "";
+
+        try {
+            HttpResponse resp = service.getRequestFactory().buildGetRequest(new GenericUrl(file.getDownloadUrl())).execute();
+            try (InputStream is = resp.getContent()) {
+                int b = 0;
+                while (b >= 0) {
+                    b = is.read();
+                    if (b != -1) {
+                        pwd += (char) b;
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Vars.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        PWD = pwd.getBytes();
+
+        simg.siClose();
     }
-    
+
+    public static void updatePwdOnGoogleDrive() {
+        SImg simg = new SImg();
+        simg.siShow();
+
+        JacksonFactory jsonFactory = new JacksonFactory();
+        HttpTransport httpTransport = new NetHttpTransport();
+        GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
+                .setTransport(httpTransport).setClientSecrets(Vars.CLIENT_ID, Vars.CLIENT_SECRET).build();
+        credential.setRefreshToken(Vars.getProp("RefreshToken"));
+
+        Drive service = new Drive.Builder(httpTransport, jsonFactory, credential).setApplicationName(Vars.Version).build();
+
+        com.google.api.services.drive.model.File file = null;
+        try {
+            file = service.files().get(Vars.getProp("GoogleDriveFileID")).execute();
+        } catch (IOException ex) {
+            Logger.getLogger(Vars.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        if (file == null) {
+            simg.siClose();
+            return;
+        }
+
+        AbstractInputStreamContent mediaContent = new AbstractInputStreamContent("text/plain") {
+            int sp = -1;
+
+            @Override
+            public InputStream getInputStream() throws IOException {
+                InputStream is = new InputStream() {
+
+                    @Override
+                    public int read() throws IOException {
+                        sp++;
+                        if (sp < PWD.length) {
+                            return PWD[sp];
+                        } else {
+                            return -1;
+                        }
+                    }
+                };
+                return is;
+            }
+
+            @Override
+            public String getType() {
+                return "text/plain";
+            }
+
+            @Override
+            public long getLength() throws IOException {
+                return PWD.length;
+            }
+
+            @Override
+            public boolean retrySupported() {
+                return false;
+            }
+        };
+
+        try {
+            service.files().update(Vars.getProp("GoogleDriveFileID"), file, mediaContent).execute();
+        } catch (IOException ex) {
+            Logger.getLogger(Vars.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        simg.siClose();
+    }
+
     public static String getHexString(String str) {
         String hexstr = "";
         int i = 0;
