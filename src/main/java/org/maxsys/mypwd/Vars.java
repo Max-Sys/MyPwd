@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -13,10 +12,10 @@ import java.util.logging.Logger;
 
 public class Vars {
 
-    public static String Version = "MyPwd 0.99-00";
+    public static String Version = "MyPwd 0.9-0 b";
     public static String MasterPassword = "";
-    public static byte[] KEY;
-    public static byte[] PWD;
+    private static byte[] KEY;
+    private static byte[] PWD;
     public static Properties prop = new Properties();
     public static String PropFileName = "";
     public static String PropPath = "";
@@ -54,16 +53,6 @@ public class Vars {
         }
     }
 
-    /*
-     pwd file:
-     +00 02 key shift
-     +02 xx pwd items
-     +xx 02 crc16
-    
-     pwd item:
-     +00 02 length
-     +02 xx body
-     */
     public static void addPwdItem(byte[] pwditem) {
         byte[] defile = DecryptBytes(KEY, PWD);
         if (defile == null) {
@@ -84,6 +73,9 @@ public class Vars {
     }
 
     public static void removePwdItem(String name) {
+        SImg simg = new SImg();
+        simg.siShow();
+
         ArrayList<byte[]> items = getPwdItems();
         if (items == null) {
             return;
@@ -95,6 +87,8 @@ public class Vars {
                 addPwdItem(item);
             }
         }
+
+        simg.siClose();
     }
 
     public static ArrayList<byte[]> getPwdItems() {
@@ -212,7 +206,7 @@ public class Vars {
         byte e;
         int tec = 0;
         String bs = "";
-        String defile = "";
+        ArrayList<Byte> defile = new ArrayList<>();
 
         int b2 = -1;
         while (b2 < 0) {
@@ -267,15 +261,19 @@ public class Vars {
             byte d = (byte) (e ^ mpk);
             d = (byte) (d ^ k);
 
-            defile += (char) d;
+            defile.add(d);
         }
 
-        byte sbl = (byte) defile.charAt(defile.length() - 2);
-        byte sbh = (byte) defile.charAt(defile.length() - 1);
+        byte sbl = defile.get(defile.size() - 2);
+        byte sbh = defile.get(defile.size() - 1);
         int sum = ((sbh & 0xFF) * 256 + (sbl & 0xFF)) & 0xFFFF;
-        defile = defile.substring(0, defile.length() - 2);
+        defile.remove(defile.size() - 1);
+        defile.remove(defile.size() - 1);
 
-        byte[] debytes = defile.getBytes();
+        byte[] debytes = new byte[defile.size()];
+        for (int i = 0; i < defile.size(); i++) {
+            debytes[i] = defile.get(i);
+        }
 
         int sumde = 0xFFFF;
         for (byte db : debytes) {
@@ -320,6 +318,62 @@ public class Vars {
         }
     }
 
+    public static void LoadKEY() {
+        KEY = LoadFile(getProp("KeysFilePath"));
+    }
+
+    public static void LoadKEY(String KEYFilePath) {
+        KEY = LoadFile(KEYFilePath);
+    }
+
+    public static void SaveKEY() {
+        SaveFile(getProp("KeysFilePath"), KEY);
+    }
+
+    public static void SaveKEY(String KEYFilePath) {
+        SaveFile(KEYFilePath, KEY);
+    }
+
+    public static boolean isKEYLoaded() {
+        return KEY != null;
+    }
+
+    public static void UnloadKEY() {
+        KEY = null;
+    }
+
+    public static void LoadPWD() {
+        PWD = LoadFile(getProp("PwdsFilePath"));
+    }
+
+    public static void LoadPWD(byte[] bytes) {
+        PWD = bytes;
+    }
+
+    public static void SavePWD() {
+        SaveFile(getProp("PwdsFilePath"), PWD);
+    }
+
+    public static void SavePWD(String PWDFilePath) {
+        SaveFile(PWDFilePath, PWD);
+    }
+
+    public static boolean isPWDLoaded() {
+        return PWD != null;
+    }
+
+    public static void UnloadPWD() {
+        PWD = null;
+    }
+
+    public static int getPWDByte(int sp) {
+        return PWD[sp];
+    }
+
+    public static int getPWDLength() {
+        return PWD.length;
+    }
+    
     public static String getHexString(String str) {
         String hexstr = "";
         int i = 0;

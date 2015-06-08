@@ -20,7 +20,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,7 +36,8 @@ public class MainFrame extends javax.swing.JFrame {
         initComponents();
 
         if (Vars.getProp("PwdsFileType").equals("L")) {
-            Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
+            //Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
+            Vars.LoadPWD();
             setTitle(Vars.Version + " - local only mode");
         }
         if (Vars.getProp("PwdsFileType").equals("G")) {
@@ -71,18 +71,20 @@ public class MainFrame extends javax.swing.JFrame {
             getPwdFromGoogleDrive();
         }
 
-        if (Vars.PWD == null) {
+        if (!Vars.isPWDLoaded()) {
             jMenuItem3.setEnabled(false);
             jMenuItem4.setEnabled(false);
             jMenuItem5.setEnabled(false);
             jMenuItem7.setEnabled(false);
             jMenuItem10.setEnabled(false);
+            jMenuItem6.setEnabled(false);
             jMenuItem11.setEnabled(false);
             if (!Vars.getProp("PwdsFileType").equals("LG")) {
                 return;
             } else {
                 try {
-                    Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
+                    //Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
+                    Vars.LoadPWD();
                 } catch (NullPointerException e) {
                     return;
                 }
@@ -106,6 +108,7 @@ public class MainFrame extends javax.swing.JFrame {
                 jMenuItem4.setEnabled(true);
                 jMenuItem5.setEnabled(true);
                 jMenuItem10.setEnabled(false);
+                jMenuItem6.setEnabled(false);
                 jMenuItem11.setEnabled(true);
             }
         } else {
@@ -115,6 +118,7 @@ public class MainFrame extends javax.swing.JFrame {
             jMenuItem4.setEnabled(false);
             jMenuItem5.setEnabled(false);
             jMenuItem10.setEnabled(false);
+            jMenuItem6.setEnabled(false);
             jMenuItem11.setEnabled(false);
         }
 
@@ -163,7 +167,8 @@ public class MainFrame extends javax.swing.JFrame {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        Vars.PWD = pwd.getBytes();
+        //Vars.PWD = pwd.getBytes();
+        Vars.LoadPWD(pwd.getBytes());
 
         simg.siClose();
     }
@@ -202,8 +207,9 @@ public class MainFrame extends javax.swing.JFrame {
                     @Override
                     public int read() throws IOException {
                         sp++;
-                        if (sp < Vars.PWD.length) {
-                            return Vars.PWD[sp];
+                        if (sp < Vars.getPWDLength()) {
+                            //return Vars.PWD[sp];
+                            return Vars.getPWDByte(sp);
                         } else {
                             return -1;
                         }
@@ -219,7 +225,7 @@ public class MainFrame extends javax.swing.JFrame {
 
             @Override
             public long getLength() throws IOException {
-                return Vars.PWD.length;
+                return Vars.getPWDLength();
             }
 
             @Override
@@ -277,6 +283,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem5 = new javax.swing.JMenuItem();
+        jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem10 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -310,6 +317,11 @@ public class MainFrame extends javax.swing.JFrame {
         });
 
         jList2.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jList2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jList2MouseClicked(evt);
+            }
+        });
         jList2.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 jList2ValueChanged(evt);
@@ -325,7 +337,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
         );
 
         jSplitPane1.setLeftComponent(jPanel1);
@@ -341,11 +353,11 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 614, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
         );
 
         jSplitPane1.setRightComponent(jPanel2);
@@ -380,8 +392,15 @@ public class MainFrame extends javax.swing.JFrame {
         });
         jMenu3.add(jMenuItem5);
 
+        jMenuItem6.setText("Edit...");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem6);
+
         jMenuItem10.setText("Remove selected");
-        jMenuItem10.setEnabled(false);
         jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem10ActionPerformed(evt);
@@ -463,8 +482,10 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         Vars.MasterPassword = "";
-        Vars.KEY = null;
-        Vars.PWD = null;
+        //Vars.KEY = null;
+        Vars.UnloadKEY();
+        //Vars.PWD = null;
+        Vars.UnloadPWD();
 
         romode = false;
 
@@ -472,10 +493,12 @@ public class MainFrame extends javax.swing.JFrame {
         dlg.setLocationRelativeTo(null);
         dlg.setVisible(true);
 
-        Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
+        //Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
+        Vars.LoadKEY();
 
         if (Vars.getProp("PwdsFileType").equals("L")) {
-            Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
+            //Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
+            Vars.LoadPWD();
             setTitle(Vars.Version + " - local only mode");
         }
         if (Vars.getProp("PwdsFileType").equals("G")) {
@@ -509,7 +532,7 @@ public class MainFrame extends javax.swing.JFrame {
                     bw.write(p.getName());
                     bw.newLine();
                     for (String fn : p.getFieldNames()) {
-                        String fv = new String(p.getField(fn));
+                        String fv = p.getField(fn);
                         bw.write("   " + fn + ": " + fv);
                         bw.newLine();
                     }
@@ -528,14 +551,16 @@ public class MainFrame extends javax.swing.JFrame {
         dlg.setVisible(true);
 
         if (Vars.getProp("PwdsFileType").equals("L")) {
-            Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+            //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+            Vars.SavePWD();
         }
         if (Vars.getProp("PwdsFileType").equals("G")) {
             updatePwdOnGoogleDrive();
         }
         if (Vars.getProp("PwdsFileType").equals("LG")) {
             updatePwdOnGoogleDrive();
-            Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+            //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+            Vars.SavePWD();
         }
 
         RefreshList();
@@ -543,11 +568,14 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         Vars.MasterPassword = "";
-        Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
+        //Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
+        Vars.LoadKEY();
         if (Vars.getProp("PwdsFileType").equals("L")) {
-            Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
+            //Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
+            Vars.LoadPWD();
         } else {
-            Vars.PWD = null;
+            //Vars.PWD = null;
+            Vars.UnloadPWD();
         }
         romode = false;
         RefreshList();
@@ -559,10 +587,12 @@ public class MainFrame extends javax.swing.JFrame {
 
         if (jList2.isSelectionEmpty()) {
             jMenuItem10.setEnabled(false);
+            jMenuItem6.setEnabled(false);
             return;
         } else {
             if (!romode) {
                 jMenuItem10.setEnabled(true);
+                jMenuItem6.setEnabled(true);
             }
         }
 
@@ -639,14 +669,16 @@ public class MainFrame extends javax.swing.JFrame {
         Vars.removePwdItem(pwd.getName());
 
         if (Vars.getProp("PwdsFileType").equals("L")) {
-            Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+            //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+            Vars.SavePWD();
         }
         if (Vars.getProp("PwdsFileType").equals("G")) {
             updatePwdOnGoogleDrive();
         }
         if (Vars.getProp("PwdsFileType").equals("LG")) {
             updatePwdOnGoogleDrive();
-            Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+            //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+            Vars.SavePWD();
         }
 
         RefreshList();
@@ -665,35 +697,35 @@ public class MainFrame extends javax.swing.JFrame {
             try (BufferedReader br = new BufferedReader(new FileReader(filen))) {
                 String line;
                 Pwd pwd = null;
+                int fnum = 1;
                 while ((line = br.readLine()) != null) {
                     if (line.contains("==========")) {
                         if (pwd == null) {
                             line = br.readLine();
                             pwd = new Pwd(line.trim());
-                            System.out.println("Pwd " + pwd.getName() + " created.");
+                            fnum = 1;
                         } else {
-                            System.out.println("Pwd " + pwd.getName() + " closed.");
                             Vars.addPwdItem(pwd.getPwdItem());
                             pwd = null;
                             line = br.readLine();
                             if (line != null) {
                                 pwd = new Pwd(line.trim());
-                                System.out.println("Pwd " + pwd.getName() + " created.");
+                                fnum = 1;
                             }
                         }
                     } else {
                         String[] fnfv = line.trim().split(": ");
-                        if (fnfv.length == 2) {
-                            //System.out.println("field: " + fnfv[0].trim() + ": " + fnfv[1].trim());
+                        if (pwd != null && fnfv.length == 2) {
+                            pwd.setField(fnfv[0].trim(), fnfv[1].trim());
                         }
-                        if (fnfv.length == 1) {
-                            //System.out.println("field: Field: " + fnfv[0].trim());
+                        if (pwd != null && fnfv.length == 1) {
+                            pwd.setField("Field-" + fnum, fnfv[0].trim());
+                            fnum++;
                         }
                     }
                 }
                 if (pwd != null) {
                     Vars.addPwdItem(pwd.getPwdItem());
-                    System.out.println("Pwd " + pwd.getName() + " closed.");
                 }
             }
         } catch (FileNotFoundException ex) {
@@ -701,10 +733,64 @@ public class MainFrame extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+
+        //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+        Vars.SavePWD();
+
         RefreshList();
     }//GEN-LAST:event_jMenuItem11ActionPerformed
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        if (jList2.isSelectionEmpty()) {
+            return;
+        }
+
+        EditPwdDialog dlg = new EditPwdDialog(this, true, (Pwd) jList2.getSelectedValue());
+        dlg.setLocationRelativeTo(null);
+        dlg.setVisible(true);
+
+        if (Vars.getProp("PwdsFileType").equals("L")) {
+            //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+            Vars.SavePWD();
+        }
+        if (Vars.getProp("PwdsFileType").equals("G")) {
+            updatePwdOnGoogleDrive();
+        }
+        if (Vars.getProp("PwdsFileType").equals("LG")) {
+            updatePwdOnGoogleDrive();
+            //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+            Vars.SavePWD();
+        }
+
+        RefreshList();
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void jList2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList2MouseClicked
+        if (jList2.isSelectionEmpty()) {
+            return;
+        }
+
+        if (evt.getClickCount() == 2) {
+            EditPwdDialog dlg = new EditPwdDialog(this, true, (Pwd) jList2.getSelectedValue());
+            dlg.setLocationRelativeTo(null);
+            dlg.setVisible(true);
+
+            if (Vars.getProp("PwdsFileType").equals("L")) {
+                //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+                Vars.SavePWD();
+            }
+            if (Vars.getProp("PwdsFileType").equals("G")) {
+                updatePwdOnGoogleDrive();
+            }
+            if (Vars.getProp("PwdsFileType").equals("LG")) {
+                updatePwdOnGoogleDrive();
+                //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
+                Vars.SavePWD();
+            }
+
+            RefreshList();
+        }
+    }//GEN-LAST:event_jList2MouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList jList2;
@@ -719,6 +805,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;

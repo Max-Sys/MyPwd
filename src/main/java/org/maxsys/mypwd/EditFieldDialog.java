@@ -1,13 +1,15 @@
 package org.maxsys.mypwd;
 
-public class AddFieldDialog extends javax.swing.JDialog {
+public class EditFieldDialog extends javax.swing.JDialog {
 
     private String p_name = "";
     private String p_value = "";
 
-    public AddFieldDialog(java.awt.Frame parent, boolean modal) {
+    public EditFieldDialog(java.awt.Frame parent, boolean modal, String pname, String pvalue) {
         super(parent, modal);
         initComponents();
+        jTextField1.setText(pname);
+        jPasswordField1.setText(pvalue);
     }
 
     public String getP_name() {
@@ -30,7 +32,7 @@ public class AddFieldDialog extends javax.swing.JDialog {
         jPasswordField1 = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Add");
+        setTitle("Edit");
 
         jButton1.setText("Cancel");
         jButton1.addActionListener(new java.awt.event.ActionListener() {

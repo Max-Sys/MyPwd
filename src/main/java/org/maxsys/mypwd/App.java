@@ -49,8 +49,9 @@ public class App {
             }
         }
 
-        Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
-        if (Vars.KEY == null) {
+        //Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
+        Vars.LoadKEY();
+        if (!Vars.isKEYLoaded()) {
             JOptionPane.showMessageDialog(null, "KEY file not found. Please choose one.");
             JFileChooser jfc = new JFileChooser();
             jfc.setSelectedFile(new File(Vars.getProp("KeysFilePath")));
@@ -58,11 +59,10 @@ public class App {
             if (r == JFileChooser.CANCEL_OPTION || !(new File(jfc.getSelectedFile().getPath())).exists()) {
                 System.exit(0);
             }
-            Vars.KEY = Vars.LoadFile(jfc.getSelectedFile().getPath());
+            //Vars.KEY = Vars.LoadFile(jfc.getSelectedFile().getPath());
+            Vars.LoadKEY(jfc.getSelectedFile().getPath());
         }
 
-        JOptionPane.showMessageDialog(null, "Длинные имена глючат!");
-        
         MainFrame frm = new MainFrame();
         frm.setLocationRelativeTo(null);
         frm.setVisible(true);

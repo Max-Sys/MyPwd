@@ -49,11 +49,7 @@ public final class Pwd {
             ic++;
             li = GetLengthInInt(lb);
             nic = ic + li;
-//            byte[] fi = new byte[li];
-//            while (ic < nic) {
-//                fi[ic + li - nic] = pwdItem[ic];
-//                ic++;
-//            }
+            
             String fi = "";
             while (ic < nic) {
                 fi += (char) pwdItem[ic];

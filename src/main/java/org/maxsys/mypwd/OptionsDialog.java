@@ -135,7 +135,8 @@ public class OptionsDialog extends javax.swing.JDialog {
             return;
         }
 
-        Vars.SaveFile(newf.getPath(), Vars.KEY);
+        //Vars.SaveFile(newf.getPath(), Vars.KEY);
+        Vars.SaveKEY(newf.getPath());
         Vars.setProp("KeysFilePath", newf.getPath());
         Vars.SaveProperties();
         File oldf = new File(jTextField2.getText());
@@ -158,7 +159,8 @@ public class OptionsDialog extends javax.swing.JDialog {
             return;
         }
 
-        Vars.SaveFile(newf.getPath(), Vars.PWD);
+        //Vars.SaveFile(newf.getPath(), Vars.PWD);
+        Vars.SavePWD(newf.getPath());
         Vars.setProp("PwdsFilePath", newf.getPath());
         Vars.SaveProperties();
         File oldf = new File(jTextField1.getText());
