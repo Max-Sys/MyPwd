@@ -9,6 +9,8 @@ public class NewPwdDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
+        setMinimumSize(getSize());
+        
         jTable1.setModel(new DefaultTableModel(
                 new Object[][]{},
                 new String[]{"Field", "Value"}) {
@@ -85,7 +87,7 @@ public class NewPwdDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)

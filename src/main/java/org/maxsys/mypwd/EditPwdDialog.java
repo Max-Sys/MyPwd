@@ -10,6 +10,8 @@ public class EditPwdDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
+        setMinimumSize(getSize());
+        
         jTable1.setModel(new DefaultTableModel(
                 new Object[][]{},
                 new String[]{"Field", "Value"}) {
@@ -50,6 +52,8 @@ public class EditPwdDialog extends javax.swing.JDialog {
         jButton4 = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Edit pwd");
@@ -99,6 +103,20 @@ public class EditPwdDialog extends javax.swing.JDialog {
             }
         });
 
+        jButton6.setText("↓");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
+        jButton7.setText("↑");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -106,7 +124,7 @@ public class EditPwdDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -117,7 +135,10 @@ public class EditPwdDialog extends javax.swing.JDialog {
                         .addComponent(jButton5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton4)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
+                        .addComponent(jButton7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton6))
                     .addComponent(jSeparator1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -139,7 +160,9 @@ public class EditPwdDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3)
                     .addComponent(jButton5)
-                    .addComponent(jButton4))
+                    .addComponent(jButton4)
+                    .addComponent(jButton6)
+                    .addComponent(jButton7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -243,12 +266,44 @@ public class EditPwdDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jButton5ActionPerformed
 
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        int sr = jTable1.getSelectedRow();
+        if (sr > 0) {
+            Object s0 = jTable1.getValueAt(sr, 0);
+            Object s1 = jTable1.getValueAt(sr, 1);
+            Object d0 = jTable1.getValueAt(sr - 1, 0);
+            Object d1 = jTable1.getValueAt(sr - 1, 1);
+            jTable1.setValueAt(d0, sr, 0);
+            jTable1.setValueAt(d1, sr, 1);
+            jTable1.setValueAt(s0, sr - 1, 0);
+            jTable1.setValueAt(s1, sr - 1, 1);
+            jTable1.setRowSelectionInterval(sr - 1, sr - 1);
+        }
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        int sr = jTable1.getSelectedRow();
+        if (sr > -1 && sr < jTable1.getRowCount() - 1) {
+            Object s0 = jTable1.getValueAt(sr, 0);
+            Object s1 = jTable1.getValueAt(sr, 1);
+            Object d0 = jTable1.getValueAt(sr + 1, 0);
+            Object d1 = jTable1.getValueAt(sr + 1, 1);
+            jTable1.setValueAt(d0, sr, 0);
+            jTable1.setValueAt(d1, sr, 1);
+            jTable1.setValueAt(s0, sr + 1, 0);
+            jTable1.setValueAt(s1, sr + 1, 1);
+            jTable1.setRowSelectionInterval(sr + 1, sr + 1);
+        }
+    }//GEN-LAST:event_jButton6ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;

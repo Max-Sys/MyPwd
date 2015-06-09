@@ -26,7 +26,6 @@ public class MainFrame extends javax.swing.JFrame {
         initComponents();
 
         if (Vars.getProp("PwdsFileType").equals("L")) {
-            //Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
             Vars.LoadPWD();
             setTitle(Vars.Version + " - local only mode");
         }
@@ -51,6 +50,8 @@ public class MainFrame extends javax.swing.JFrame {
         jTable1.getColumnModel().getColumn(0).setPreferredWidth(500);
         jTable1.getColumnModel().getColumn(1).setPreferredWidth(500);
 
+        setMinimumSize(getSize());
+        
         RefreshList();
 
         jList2.requestFocus();
@@ -73,7 +74,6 @@ public class MainFrame extends javax.swing.JFrame {
                 return;
             } else {
                 try {
-                    //Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
                     Vars.LoadPWD();
                 } catch (NullPointerException e) {
                     return;
@@ -354,9 +354,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         Vars.MasterPassword = "";
-        //Vars.KEY = null;
         Vars.UnloadKEY();
-        //Vars.PWD = null;
         Vars.UnloadPWD();
 
         romode = false;
@@ -365,11 +363,9 @@ public class MainFrame extends javax.swing.JFrame {
         dlg.setLocationRelativeTo(null);
         dlg.setVisible(true);
 
-        //Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
         Vars.LoadKEY();
 
         if (Vars.getProp("PwdsFileType").equals("L")) {
-            //Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
             Vars.LoadPWD();
             setTitle(Vars.Version + " - local only mode");
         }
@@ -438,13 +434,10 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         Vars.MasterPassword = "";
-        //Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
         Vars.LoadKEY();
         if (Vars.getProp("PwdsFileType").equals("L")) {
-            //Vars.PWD = Vars.LoadFile(Vars.getProp("PwdsFilePath"));
             Vars.LoadPWD();
         } else {
-            //Vars.PWD = null;
             Vars.UnloadPWD();
         }
         romode = false;
@@ -637,7 +630,6 @@ public class MainFrame extends javax.swing.JFrame {
         dlg.setVisible(true);
 
         if (Vars.getProp("PwdsFileType").equals("L")) {
-            //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
             Vars.SavePWD();
         }
         if (Vars.getProp("PwdsFileType").equals("G")) {
@@ -645,7 +637,6 @@ public class MainFrame extends javax.swing.JFrame {
         }
         if (Vars.getProp("PwdsFileType").equals("LG")) {
             Vars.updatePwdOnGoogleDrive();
-            //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
             Vars.SavePWD();
         }
 
@@ -663,7 +654,6 @@ public class MainFrame extends javax.swing.JFrame {
             dlg.setVisible(true);
 
             if (Vars.getProp("PwdsFileType").equals("L")) {
-                //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
                 Vars.SavePWD();
             }
             if (Vars.getProp("PwdsFileType").equals("G")) {
@@ -671,7 +661,6 @@ public class MainFrame extends javax.swing.JFrame {
             }
             if (Vars.getProp("PwdsFileType").equals("LG")) {
                 Vars.updatePwdOnGoogleDrive();
-                //Vars.SaveFile(Vars.getProp("PwdsFilePath"), Vars.PWD);
                 Vars.SavePWD();
             }
 
