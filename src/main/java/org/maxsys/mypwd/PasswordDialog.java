@@ -7,6 +7,8 @@ public class PasswordDialog extends javax.swing.JDialog {
     public PasswordDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setAlwaysOnTop(false);
+        setAlwaysOnTop(true);
     }
 
     @SuppressWarnings("unchecked")
