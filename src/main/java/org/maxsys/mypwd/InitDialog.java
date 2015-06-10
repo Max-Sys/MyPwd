@@ -706,7 +706,6 @@ public class InitDialog extends javax.swing.JDialog {
             if (file.exists()) {
                 jTextField2.setText(jfc.getSelectedFile().getPath());
                 key = Vars.LoadFile(jfc.getSelectedFile().getPath());
-                //JOptionPane.showMessageDialog(this, "KEY file \"" + jfc.getSelectedFile().getPath() + "\" will be used.");
             } else {
                 JOptionPane.showMessageDialog(this, "KEY file \"" + jfc.getSelectedFile().getPath() + "\" does not exists!");
             }
@@ -736,7 +735,6 @@ public class InitDialog extends javax.swing.JDialog {
             fos.close();
             key = Vars.LoadFile(filen);
             jTextField2.setText(filen);
-            //JOptionPane.showMessageDialog(this, "KEY file \"" + filen + "\" created successfully.");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(InitDialog.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -761,9 +759,8 @@ public class InitDialog extends javax.swing.JDialog {
             if (f.exists()) {
                 pwd = Vars.LoadFile(jfc.getSelectedFile().getPath());
                 Vars.MasterPassword = "";
-                if (Vars.DecryptBytes(key, pwd) != null) {
+                if (Vars.tryCheckOk(Vars.DecryptBytes(key, pwd))) {
                     jTextField1.setText(jfc.getSelectedFile().getPath());
-                    //JOptionPane.showMessageDialog(this, "PWD file \"" + jfc.getSelectedFile().getPath() + "\" will be used.");
                 } else {
                     jTextField1.setText("");
                     JOptionPane.showMessageDialog(this, "PWD file \"" + jfc.getSelectedFile().getPath() + "\" is wrong and will not be used.");
@@ -807,7 +804,6 @@ public class InitDialog extends javax.swing.JDialog {
             } else {
                 Vars.SaveFile(filen, pwd);
                 jTextField1.setText(filen);
-                //JOptionPane.showMessageDialog(this, "PWD file \"" + filen + "\" created successfully.");
             }
         }
     }//GEN-LAST:event_jButton8ActionPerformed
@@ -908,7 +904,7 @@ public class InitDialog extends javax.swing.JDialog {
 
         Vars.MasterPassword = oldpassw;
         pwd = Vars.DecryptBytes(key, pwd);
-        if (pwd == null) {
+        if (!Vars.tryCheckOk(pwd)) {
             JOptionPane.showMessageDialog(null, "Decryption failed! Probably the old password wrong.");
             return;
         }
