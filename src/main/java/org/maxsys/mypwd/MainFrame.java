@@ -709,9 +709,9 @@ public class MainFrame extends javax.swing.JFrame {
         } else {
             Vars.setProp("SortAlphabetically", "no");
         }
-        
+
         RefreshList();
-        
+
         Vars.SaveProperties();
     }//GEN-LAST:event_jCheckBoxMenuItem1ActionPerformed
 
