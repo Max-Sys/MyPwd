@@ -871,7 +871,24 @@ public class InitDialog extends javax.swing.JDialog {
         if (jRadioButton6.isSelected()) {
             Vars.setProp("PwdsFileType", "LG");
             Vars.setProp("KeysFilePath", jTextField2.getText());
-            Vars.setProp("PwdsFilePath", jTextField1.getText());
+            if (jLabel13.getText().startsWith("Local")) {
+                Vars.setProp("PwdsFilePath", jTextField1.getText());
+            } else {
+                int kfnum = 1;
+                String filen = Vars.PropPath + "/pwd-" + kfnum + ".dat";
+                File f = new File(filen);
+                while (f.exists()) {
+                    kfnum++;
+                    if (kfnum == 1000) {
+                        JOptionPane.showMessageDialog(this, "Error creating PWD file!");
+                        return;
+                    }
+                    filen = Vars.PropPath + "/pwd-" + kfnum + ".dat";
+                    f = new File(filen);
+                }
+                Vars.SaveFile(filen, pwd);
+                Vars.setProp("PwdsFilePath", filen);
+            }
         }
 
         Vars.SaveProperties();
@@ -965,8 +982,6 @@ public class InitDialog extends javax.swing.JDialog {
         jPasswordField1.setEnabled(false);
         jPasswordField2.setEnabled(false);
         jButton12.setEnabled(true);
-
-        //JOptionPane.showMessageDialog(this, "PWD file \"" + Vars.getProp("PwdsFilePath") + "\" encrypted and saved successfully.");
     }//GEN-LAST:event_jButton15ActionPerformed
 
     private void jButton22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton22ActionPerformed

@@ -2,8 +2,8 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2015-06-17T10:20:48</date>
-  <millis>1434529248392</millis>
+  <date>2015-06-17T10:35:24</date>
+  <millis>1434530124188</millis>
   <sequence>0</sequence>
   <logger>org.maxsys.mypwd.Vars</logger>
   <level>SEVERE</level>
