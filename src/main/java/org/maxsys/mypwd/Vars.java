@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
 
 public class Vars {
 
-    public static String Version = "MyPwd 1.00-RC2";
+    public static String Version = "MyPwd 1.00-RC3";
     public static String MasterPassword = "";
     private static byte[] KEY;
     private static byte[] PWD;

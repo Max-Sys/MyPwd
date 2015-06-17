@@ -115,7 +115,7 @@ public class SImg extends JWindow {
     }
 
     void siClose() {
+        setAlwaysOnTop(false);
         tr.Stop();
-        dispose();
     }
 }

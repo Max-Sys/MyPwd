@@ -6,6 +6,8 @@ import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.AbstractInputStreamContent;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -81,6 +83,8 @@ public class InitDialog extends javax.swing.JDialog {
         jButton25 = new javax.swing.JButton();
         jLabel13 = new javax.swing.JLabel();
         jTextField9 = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        jTextField5 = new javax.swing.JTextField();
         jButton21 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jButton10 = new javax.swing.JButton();
@@ -355,7 +359,7 @@ public class InitDialog extends javax.swing.JDialog {
             }
         });
 
-        jPanel10.setBorder(javax.swing.BorderFactory.createTitledBorder("File & folder"));
+        jPanel10.setBorder(javax.swing.BorderFactory.createTitledBorder("Google Drive file & folder"));
         jPanel10.setEnabled(false);
 
         jLabel11.setText("Folder name:");
@@ -382,6 +386,13 @@ public class InitDialog extends javax.swing.JDialog {
         jTextField9.setEditable(false);
         jTextField9.setEnabled(false);
 
+        jLabel10.setText("File ID (Please note it for later use on other devices):");
+        jLabel10.setEnabled(false);
+
+        jTextField5.setEditable(false);
+        jTextField5.setText("---");
+        jTextField5.setEnabled(false);
+
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
         jPanel10Layout.setHorizontalGroup(
@@ -401,7 +412,11 @@ public class InitDialog extends javax.swing.JDialog {
                     .addGroup(jPanel10Layout.createSequentialGroup()
                         .addComponent(jLabel13)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField9)))
+                        .addComponent(jTextField9))
+                    .addGroup(jPanel10Layout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField5)))
                 .addContainerGap())
         );
         jPanel10Layout.setVerticalGroup(
@@ -421,6 +436,10 @@ public class InitDialog extends javax.swing.JDialog {
                     .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton25)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -456,7 +475,7 @@ public class InitDialog extends javax.swing.JDialog {
                 .addComponent(jButton24)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 133, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 107, Short.MAX_VALUE)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton23)
                     .addComponent(jButton22)
@@ -667,14 +686,21 @@ public class InitDialog extends javax.swing.JDialog {
             return;
         }
 
+        if (jRadioButton4.isSelected()) {
+            file = new File(jTextField1.getText());
+            if (!file.exists()) {
+                JOptionPane.showMessageDialog(this, "PWD file does not exists!");
+                return;
+            }
+        }
         if (jRadioButton5.isSelected()) {
-            if (pwd == null || jTextField1.getText().length() == 0) {
+            if ((pwd == null || jTextField1.getText().length() == 0) && !jTextField1.getText().startsWith("ID:")) {
                 JOptionPane.showMessageDialog(this, "Please create new empty PWD file or choose existing one!");
                 return;
             }
         } else {
             file = new File(jTextField1.getText());
-            if (pwd == null || !file.exists() || jTextField1.getText().length() == 0) {
+            if ((pwd == null || !file.exists() || jTextField1.getText().length() == 0) && !jTextField1.getText().startsWith("ID:")) {
                 JOptionPane.showMessageDialog(this, "PWD file does not exists!");
                 return;
             }
@@ -684,7 +710,15 @@ public class InitDialog extends javax.swing.JDialog {
         if (jRadioButton4.isSelected()) {
             cl.show(getContentPane(), "card4");
         } else {
-            jTextField9.setText(jTextField1.getText());
+            if (jTextField1.getText().startsWith("ID:")) {
+                jLabel13.setText("Google Drive file ID:");
+                jTextField9.setText(jTextField1.getText().substring(3));
+                jButton25.setText("Download PWD file from Google Drive");
+            } else {
+                jLabel13.setText("Local PWD file:");
+                jTextField9.setText(jTextField1.getText());
+                jButton25.setText("Upload PWD file to Google Drive");
+            }
             cl.show(getContentPane(), "card7");
         }
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -748,29 +782,38 @@ public class InitDialog extends javax.swing.JDialog {
             return;
         }
 
-        JFileChooser jfc = new JFileChooser(Vars.PropPath);
-        jfc.showOpenDialog(null);
-        if (jfc.getSelectedFile() != null) {
-            if (jfc.getSelectedFile().getPath().equals(jTextField2.getText())) {
-                JOptionPane.showMessageDialog(this, "PWD file and KEY file should not be the same!");
-                return;
+        if (jRadioButton5.isSelected() || jRadioButton6.isSelected()) {
+            GetGDFileIDDialog dlg = new GetGDFileIDDialog(null, true);
+            dlg.setLocationRelativeTo(null);
+            dlg.setVisible(true);
+            if (dlg.getFileID().length() > 0) {
+                jTextField1.setText("ID:" + dlg.getFileID());
             }
-            File f = new File(jfc.getSelectedFile().getPath());
-            if (f.exists()) {
-                pwd = Vars.LoadFile(jfc.getSelectedFile().getPath());
-                Vars.MasterPassword = "";
-                if (Vars.tryCheckOk(Vars.DecryptBytes(key, pwd))) {
-                    jTextField1.setText(jfc.getSelectedFile().getPath());
-                } else {
-                    jTextField1.setText("");
-                    JOptionPane.showMessageDialog(this, "PWD file \"" + jfc.getSelectedFile().getPath() + "\" is wrong and will not be used.");
+        } else {
+            JFileChooser jfc = new JFileChooser(Vars.PropPath);
+            jfc.showOpenDialog(null);
+            if (jfc.getSelectedFile() != null) {
+                if (jfc.getSelectedFile().getPath().equals(jTextField2.getText())) {
+                    JOptionPane.showMessageDialog(this, "PWD file and KEY file should not be the same!");
+                    return;
+                }
+                File f = new File(jfc.getSelectedFile().getPath());
+                if (f.exists()) {
+                    pwd = Vars.LoadFile(jfc.getSelectedFile().getPath());
                     Vars.MasterPassword = "";
+                    if (Vars.tryCheckOk(Vars.DecryptBytes(key, pwd))) {
+                        jTextField1.setText(jfc.getSelectedFile().getPath());
+                    } else {
+                        jTextField1.setText("");
+                        JOptionPane.showMessageDialog(this, "PWD file \"" + jfc.getSelectedFile().getPath() + "\" is wrong and will not be used.");
+                        Vars.MasterPassword = "";
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "PWD file does not exists!");
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "PWD file does not exists!");
             }
-        } else {
-            JOptionPane.showMessageDialog(this, "PWD file does not exists!");
         }
     }//GEN-LAST:event_jButton7ActionPerformed
 
@@ -963,19 +1006,21 @@ public class InitDialog extends javax.swing.JDialog {
 
         Vars.setProp("RefreshToken", credential.getRefreshToken());
 
+        if (!jLabel13.getText().startsWith("Google")) {
+            jLabel11.setEnabled(true);
+            jLabel12.setEnabled(true);
+            jTextField7.setEnabled(true);
+            jTextField8.setEnabled(true);
+        }
         jButton24.setEnabled(false);
         jPanel10.setEnabled(true);
-        jLabel11.setEnabled(true);
-        jLabel12.setEnabled(true);
         jLabel13.setEnabled(true);
-        jTextField7.setEnabled(true);
-        jTextField8.setEnabled(true);
         jTextField9.setEnabled(true);
         jButton25.setEnabled(true);
     }//GEN-LAST:event_jButton24ActionPerformed
 
     private void jButton25ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton25ActionPerformed
-        if (jTextField8.getText().length() == 0) {
+        if (jTextField8.getText().length() == 0 && jButton25.getText().startsWith("Upload")) {
             JOptionPane.showMessageDialog(this, "File name can not be empty!");
             return;
         }
@@ -991,20 +1036,81 @@ public class InitDialog extends javax.swing.JDialog {
 
         Drive service = new Drive.Builder(httpTransport, jsonFactory, credential).setApplicationName(Vars.Version).build();
 
-        String folderid = "";
+        String fileid = "";
 
-        if (jTextField7.getText().length() > 0) {
+        if (jButton25.getText().startsWith("Upload")) {
+            String folderid = "";
+
+            if (jTextField7.getText().length() > 0) {
+                com.google.api.services.drive.model.File body = new com.google.api.services.drive.model.File();
+                body.setTitle(jTextField7.getText());
+                body.setDescription("MyPwd Folder");
+                body.setMimeType("application/vnd.google-apps.folder");
+
+                try {
+                    com.google.api.services.drive.model.File file = service.files().insert(body).execute();
+                    if (file != null) {
+                        folderid = file.getId();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Error creating folder!");
+                        simg.siClose();
+                        return;
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(InitDialog.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
             com.google.api.services.drive.model.File body = new com.google.api.services.drive.model.File();
-            body.setTitle(jTextField7.getText());
-            body.setDescription("MyPwd Folder");
-            body.setMimeType("application/vnd.google-apps.folder");
+            body.setTitle(jTextField8.getText());
+            body.setDescription("MyPwd PWD file");
+            body.setMimeType("text/plain");
+            if (folderid.length() > 0) {
+                body.setParents(Arrays.asList(new ParentReference().setId(folderid)));
+            }
+
+            AbstractInputStreamContent mediaContent = new AbstractInputStreamContent("text/plain") {
+                int sp = -1;
+
+                @Override
+                public InputStream getInputStream() throws IOException {
+                    InputStream is = new InputStream() {
+
+                        @Override
+                        public int read() throws IOException {
+                            sp++;
+                            if (sp < pwd.length) {
+                                return pwd[sp];
+                            } else {
+                                return -1;
+                            }
+                        }
+                    };
+                    return is;
+                }
+
+                @Override
+                public String getType() {
+                    return "text/plain";
+                }
+
+                @Override
+                public long getLength() throws IOException {
+                    return pwd.length;
+                }
+
+                @Override
+                public boolean retrySupported() {
+                    return false;
+                }
+            };
 
             try {
-                com.google.api.services.drive.model.File file = service.files().insert(body).execute();
+                com.google.api.services.drive.model.File file = service.files().insert(body, mediaContent).execute();
                 if (file != null) {
-                    folderid = file.getId();
+                    fileid = file.getId();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Error creating folder!");
+                    JOptionPane.showMessageDialog(this, "Error creating file!");
                     simg.siClose();
                     return;
                 }
@@ -1013,68 +1119,46 @@ public class InitDialog extends javax.swing.JDialog {
             }
         }
 
-        com.google.api.services.drive.model.File body = new com.google.api.services.drive.model.File();
-        body.setTitle(jTextField8.getText());
-        body.setDescription("MyPwd PWD file");
-        body.setMimeType("text/plain");
-        if (folderid.length() > 0) {
-            body.setParents(Arrays.asList(new ParentReference().setId(folderid)));
-        }
-
-        //File fileContent = new File(jTextField9.getText());
-        //FileContent mediaContent = new FileContent("text/plain", fileContent);
-        AbstractInputStreamContent mediaContent = new AbstractInputStreamContent("text/plain") {
-            int sp = -1;
-
-            @Override
-            public InputStream getInputStream() throws IOException {
-                InputStream is = new InputStream() {
-
-                    @Override
-                    public int read() throws IOException {
-                        sp++;
-                        if (sp < pwd.length) {
-                            return pwd[sp];
-                        } else {
-                            return -1;
-                        }
-                    }
-                };
-                return is;
+        if (jButton25.getText().startsWith("Download")) {
+            com.google.api.services.drive.model.File file = null;
+            try {
+                file = service.files().get(jTextField9.getText()).execute();
+            } catch (IOException | NullPointerException ex) {
+                Logger.getLogger(Vars.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            @Override
-            public String getType() {
-                return "text/plain";
-            }
-
-            @Override
-            public long getLength() throws IOException {
-                return pwd.length;
-            }
-
-            @Override
-            public boolean retrySupported() {
-                return false;
-            }
-        };
-
-        String fileid = "";
-        try {
-            com.google.api.services.drive.model.File file = service.files().insert(body, mediaContent).execute();
-            if (file != null) {
-                fileid = file.getId();
-            } else {
-                JOptionPane.showMessageDialog(this, "Error creating file!");
+            if (file == null) {
                 simg.siClose();
+                JOptionPane.showMessageDialog(null, "Failed to access PWD file on Google Drive!");
                 return;
             }
-        } catch (IOException ex) {
-            Logger.getLogger(InitDialog.class.getName()).log(Level.SEVERE, null, ex);
+
+            String spwd = "";
+
+            try {
+                HttpResponse resp = service.getRequestFactory().buildGetRequest(new GenericUrl(file.getDownloadUrl())).execute();
+                try (InputStream is = resp.getContent()) {
+                    int b = 0;
+                    while (b >= 0) {
+                        b = is.read();
+                        if (b != -1) {
+                            spwd += (char) b;
+                        }
+                    }
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(Vars.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            fileid = jTextField9.getText();
+            pwd = spwd.getBytes();
         }
 
+        jTextField5.setText(fileid);
         Vars.setProp("GoogleDriveFileID", fileid);
 
+        jLabel10.setEnabled(true);
+        jTextField5.setEnabled(true);
         jPanel10.setEnabled(false);
         jLabel11.setEnabled(false);
         jLabel12.setEnabled(false);
@@ -1125,6 +1209,7 @@ public class InitDialog extends javax.swing.JDialog {
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -1155,6 +1240,7 @@ public class InitDialog extends javax.swing.JDialog {
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField7;
     private javax.swing.JTextField jTextField8;
     private javax.swing.JTextField jTextField9;
