@@ -4,11 +4,18 @@ import javax.swing.JOptionPane;
 
 public class PasswordDialog extends javax.swing.JDialog {
 
-    public PasswordDialog(java.awt.Frame parent, boolean modal) {
+    public PasswordDialog(java.awt.Frame parent, boolean modal, boolean newpassword) {
         super(parent, modal);
         initComponents();
         setAlwaysOnTop(false);
         setAlwaysOnTop(true);
+        if (newpassword) {
+            setTitle("Enter new password");
+            jLabel1.setText("New password:");
+        } else {
+            setTitle("Enter password");
+            jLabel1.setText("Password:");
+        }
     }
 
     @SuppressWarnings("unchecked")

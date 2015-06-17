@@ -49,7 +49,6 @@ public class App {
             }
         }
 
-        //Vars.KEY = Vars.LoadFile(Vars.getProp("KeysFilePath"));
         Vars.LoadKEY();
         if (!Vars.isKEYLoaded()) {
             JOptionPane.showMessageDialog(null, "KEY file not found. Please choose one.");
@@ -59,8 +58,14 @@ public class App {
             if (r == JFileChooser.CANCEL_OPTION || !(new File(jfc.getSelectedFile().getPath())).exists()) {
                 System.exit(0);
             }
-            //Vars.KEY = Vars.LoadFile(jfc.getSelectedFile().getPath());
             Vars.LoadKEY(jfc.getSelectedFile().getPath());
+        }
+
+        PasswordDialog dlg = new PasswordDialog(null, true, false);
+        dlg.setLocationRelativeTo(null);
+        dlg.setVisible(true);
+        if (Vars.MasterPassword.length() == 0) {
+            return;
         }
 
         MainFrame frm = new MainFrame();

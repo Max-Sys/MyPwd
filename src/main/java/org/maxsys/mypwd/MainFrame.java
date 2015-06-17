@@ -11,6 +11,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -36,6 +38,12 @@ public class MainFrame extends javax.swing.JFrame {
             setTitle(Vars.Version + " - remote + local mode");
         }
 
+        if (Vars.getProp("SortAlphabetically") != null && Vars.getProp("SortAlphabetically").equals("yes")) {
+            jCheckBoxMenuItem1.setSelected(true);
+        } else {
+            jCheckBoxMenuItem1.setSelected(false);
+        }
+
         jSplitPane1.setDividerLocation(0.35);
 
         jTable1.setModel(new DefaultTableModel(
@@ -51,7 +59,7 @@ public class MainFrame extends javax.swing.JFrame {
         jTable1.getColumnModel().getColumn(1).setPreferredWidth(500);
 
         setMinimumSize(getSize());
-        
+
         RefreshList();
 
         jList2.requestFocus();
@@ -112,7 +120,23 @@ public class MainFrame extends javax.swing.JFrame {
             jMenuItem11.setEnabled(false);
         }
 
-        jList2.setModel(lm);
+        if (jCheckBoxMenuItem1.isSelected()) {
+            Object[] pwds = lm.toArray();
+            Arrays.sort(pwds, new Comparator<Object>() {
+
+                @Override
+                public int compare(Object o1, Object o2) {
+                    return o1.toString().compareToIgnoreCase(o2.toString());
+                }
+            });
+            DefaultListModel lmnew = new DefaultListModel();
+            for (Object pwd : pwds) {
+                lmnew.addElement(pwd);
+            }
+            jList2.setModel(lmnew);
+        } else {
+            jList2.setModel(lm);
+        }
     }
 
     private class showtimer implements Runnable {
@@ -157,6 +181,8 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem10 = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JPopupMenu.Separator();
+        jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
@@ -279,6 +305,15 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         jMenu3.add(jMenuItem10);
+        jMenu3.add(jSeparator3);
+
+        jCheckBoxMenuItem1.setText("Sort alphabetically");
+        jCheckBoxMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jCheckBoxMenuItem1);
 
         jMenuBar1.add(jMenu3);
 
@@ -668,7 +703,20 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jList2MouseClicked
 
+    private void jCheckBoxMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItem1ActionPerformed
+        if (jCheckBoxMenuItem1.isSelected()) {
+            Vars.setProp("SortAlphabetically", "yes");
+        } else {
+            Vars.setProp("SortAlphabetically", "no");
+        }
+        
+        RefreshList();
+        
+        Vars.SaveProperties();
+    }//GEN-LAST:event_jCheckBoxMenuItem1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JList jList2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
@@ -692,6 +740,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables

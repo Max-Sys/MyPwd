@@ -838,7 +838,15 @@ public class InitDialog extends javax.swing.JDialog {
         }
 
         byte[] defile = new byte[0];
+
         Vars.MasterPassword = "";
+        PasswordDialog dlg = new PasswordDialog(null, true, true);
+        dlg.setLocationRelativeTo(null);
+        dlg.setVisible(true);
+        if (Vars.MasterPassword.length() == 0) {
+            return;
+        }
+
         pwd = Vars.EncryptBytes(key, defile);
 
         if (pwd != null) {

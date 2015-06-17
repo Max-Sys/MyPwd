@@ -188,7 +188,7 @@ public class Vars {
 
     public static byte[] EncryptBytes(byte[] key, byte[] defile) {
         if (MasterPassword.length() == 0) {
-            PasswordDialog dlg = new PasswordDialog(null, true);
+            PasswordDialog dlg = new PasswordDialog(null, true, false);
             dlg.setLocationRelativeTo(null);
             dlg.setVisible(true);
             if (MasterPassword.length() == 0) {
@@ -232,7 +232,7 @@ public class Vars {
 
     public static byte[] DecryptBytes(byte[] key, byte[] enfile) {
         if (MasterPassword.length() == 0) {
-            PasswordDialog dlg = new PasswordDialog(null, true);
+            PasswordDialog dlg = new PasswordDialog(null, true, false);
             dlg.setLocationRelativeTo(null);
             dlg.setVisible(true);
             if (MasterPassword.length() == 0) {
