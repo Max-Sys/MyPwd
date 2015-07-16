@@ -1048,9 +1048,6 @@ public class InitDialog extends javax.swing.JDialog {
             return;
         }
 
-        SImg simg = new SImg();
-        simg.siShow();
-
         JacksonFactory jsonFactory = new JacksonFactory();
         HttpTransport httpTransport = new NetHttpTransport();
         GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
@@ -1076,7 +1073,6 @@ public class InitDialog extends javax.swing.JDialog {
                         folderid = file.getId();
                     } else {
                         JOptionPane.showMessageDialog(this, "Error creating folder!");
-                        simg.siClose();
                         return;
                     }
                 } catch (IOException ex) {
@@ -1134,7 +1130,6 @@ public class InitDialog extends javax.swing.JDialog {
                     fileid = file.getId();
                 } else {
                     JOptionPane.showMessageDialog(this, "Error creating file!");
-                    simg.siClose();
                     return;
                 }
             } catch (IOException ex) {
@@ -1151,7 +1146,6 @@ public class InitDialog extends javax.swing.JDialog {
             }
 
             if (file == null) {
-                simg.siClose();
                 JOptionPane.showMessageDialog(null, "Failed to access PWD file on Google Drive!");
                 return;
             }
@@ -1192,8 +1186,6 @@ public class InitDialog extends javax.swing.JDialog {
         jButton25.setEnabled(false);
         jButton22.setEnabled(true);
         jButton21.setEnabled(false);
-
-        simg.siClose();
     }//GEN-LAST:event_jButton25ActionPerformed
 
     private void jButton21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton21ActionPerformed

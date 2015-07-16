@@ -592,9 +592,6 @@ public class MainFrame extends javax.swing.JFrame {
             return;
         }
 
-        SImg simg = new SImg();
-        simg.siShow();
-
         Vars.NewPWD();
 
         String filen = jfc.getSelectedFile().getPath();
@@ -638,8 +635,6 @@ public class MainFrame extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        simg.siClose();
 
         if (Vars.getProp("PwdsFileType").equals("L")) {
             Vars.SavePWD();
@@ -688,18 +683,19 @@ public class MainFrame extends javax.swing.JFrame {
             dlg.setLocationRelativeTo(null);
             dlg.setVisible(true);
 
-            if (Vars.getProp("PwdsFileType").equals("L")) {
-                Vars.SavePWD();
+            if (!dlg.cancelPressed) {
+                if (Vars.getProp("PwdsFileType").equals("L")) {
+                    Vars.SavePWD();
+                }
+                if (Vars.getProp("PwdsFileType").equals("G")) {
+                    Vars.updatePwdOnGoogleDrive();
+                }
+                if (Vars.getProp("PwdsFileType").equals("LG")) {
+                    Vars.updatePwdOnGoogleDrive();
+                    Vars.SavePWD();
+                }
+                RefreshList();
             }
-            if (Vars.getProp("PwdsFileType").equals("G")) {
-                Vars.updatePwdOnGoogleDrive();
-            }
-            if (Vars.getProp("PwdsFileType").equals("LG")) {
-                Vars.updatePwdOnGoogleDrive();
-                Vars.SavePWD();
-            }
-
-            RefreshList();
         }
     }//GEN-LAST:event_jList2MouseClicked
 

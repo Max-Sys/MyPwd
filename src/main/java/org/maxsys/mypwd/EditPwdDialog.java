@@ -5,13 +5,14 @@ import javax.swing.table.DefaultTableModel;
 public class EditPwdDialog extends javax.swing.JDialog {
 
     String oldPwdName;
+    public boolean cancelPressed = false;
 
     public EditPwdDialog(java.awt.Frame parent, boolean modal, Pwd pwd) {
         super(parent, modal);
         initComponents();
 
         setMinimumSize(getSize());
-        
+
         jTable1.setModel(new DefaultTableModel(
                 new Object[][]{},
                 new String[]{"Field", "Value"}) {
@@ -176,6 +177,7 @@ public class EditPwdDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        cancelPressed = true;
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 

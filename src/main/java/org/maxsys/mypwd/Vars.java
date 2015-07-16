@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
 
 public class Vars {
 
-    public static String Version = "MyPwd 1.00-RC3";
+    public static String Version = "MyPwd 1.01-RC3";
     public static String MasterPassword = "";
     private static byte[] KEY;
     private static byte[] PWD;
@@ -82,9 +82,6 @@ public class Vars {
     }
 
     public static void removePwdItem(String name) {
-        SImg simg = new SImg();
-        simg.siShow();
-
         ArrayList<byte[]> items = getPwdItems();
         if (items == null) {
             return;
@@ -96,14 +93,9 @@ public class Vars {
                 addPwdItem(item);
             }
         }
-
-        simg.siClose();
     }
 
     public static void editPwdItem(String name, byte[] newpwditem) {
-        SImg simg = new SImg();
-        simg.siShow();
-
         ArrayList<byte[]> items = getPwdItems();
         if (items == null) {
             return;
@@ -117,8 +109,6 @@ public class Vars {
                 addPwdItem(newpwditem);
             }
         }
-
-        simg.siClose();
     }
 
     public static ArrayList<byte[]> getPwdItems() {
@@ -389,9 +379,6 @@ public class Vars {
     }
 
     public static void getPwdFromGoogleDrive() {
-        SImg simg = new SImg();
-        simg.siShow();
-
         JacksonFactory jsonFactory = new JacksonFactory();
         HttpTransport httpTransport = new NetHttpTransport();
         GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
@@ -408,7 +395,6 @@ public class Vars {
         }
 
         if (file == null) {
-            simg.siClose();
             JOptionPane.showMessageDialog(null, "Failed to access PWD file on Google Drive!");
             return;
         }
@@ -431,14 +417,9 @@ public class Vars {
         }
 
         PWD = pwd.getBytes();
-
-        simg.siClose();
     }
 
     public static void updatePwdOnGoogleDrive() {
-        SImg simg = new SImg();
-        simg.siShow();
-
         JacksonFactory jsonFactory = new JacksonFactory();
         HttpTransport httpTransport = new NetHttpTransport();
         GoogleCredential credential = new GoogleCredential.Builder().setJsonFactory(jsonFactory)
@@ -455,7 +436,6 @@ public class Vars {
         }
 
         if (file == null) {
-            simg.siClose();
             return;
         }
 
@@ -500,8 +480,6 @@ public class Vars {
         } catch (IOException ex) {
             Logger.getLogger(Vars.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        simg.siClose();
     }
 
     public static String getHexString(String str) {
